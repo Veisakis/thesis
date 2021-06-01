@@ -1,9 +1,3 @@
-Programming: Python, Bash
-Website: Flask, LAMP
-Host: RaspberryPi, Linode
-IoT: RaspberryPi w/ Python
-Jupyter Notebook: Python w/ widgets
-Linux: binary, i3block, alias, script
-API: data.gov, meteo
-
-ThinkPad, Github, Latex, API(gov), curl(meteo), Python(pandas-matplotlib), RaspberryPi (touch-screen), IoT-SmartHome 
+Python: PyTorch, Machine Learning, OpenCV
+Papers: Nature Optimization
+Search: Optimization, Optimization Types, Python Optimization
