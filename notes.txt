@@ -1,3 +1,3 @@
-Python: PyTorch, Machine Learning, OpenCV
+Python: PyTorch, Machine Learning, OpenCV, SciPy
 Papers: Nature Optimization
 Search: Optimization, Optimization Types, Python Optimization
