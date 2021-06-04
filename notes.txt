@@ -1,3 +1,6 @@
-Python: PyTorch, Machine Learning, OpenCV, SciPy
 Papers: Nature Optimization
-Search: Optimization, Optimization Types, Python Optimization
+Search: Optimization Types
+Target: PV, Windturbines, Biomass, Hydroplant
+
+Libs: SciPy, Matplot, requests, virtualenv
+Base: Jupyter-Widgets
