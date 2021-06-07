@@ -1,6 +1,6 @@
-Papers: Nature Optimization
-Search: Optimization Types
-Lectures: MITOpenCourses (Optimization 1-2)
+Papers: 
+Search: 
+Lectures: 
 Target: PV, Windturbines, Biomass, Hydroplant
 
 Libs: SciPy, Matplot, requests, virtualenv, datetime
