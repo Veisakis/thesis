@@ -1,6 +1,6 @@
 Papers: 
 Search: 
 Lectures: 
-Target: PV, Windturbines, Biomass, Hydroplant
+Target: Biomass, Hydroplant
 
 Libs: SciPy, Matplot, requests, virtualenv, datetime
