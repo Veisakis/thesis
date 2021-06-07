@@ -4,4 +4,3 @@ Lectures: MITOpenCourses (Optimization 1-2)
 Target: PV, Windturbines, Biomass, Hydroplant
 
 Libs: SciPy, Matplot, requests, virtualenv, datetime
-Base: Jupyter-Widgets
