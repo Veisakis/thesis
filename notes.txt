@@ -1,7 +1,7 @@
 Papers: 
 Search: 
 Lectures:
-Python Theroy: pep8
+Python Theory: pep8
 Target: Wind-Hydro
 Libs: SciPy, Matplot, requests, virtualenv, datetime, pandas, numpy, git, fedora, atom
 
