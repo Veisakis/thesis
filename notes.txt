@@ -1,8 +1,7 @@
+Target: Wind-Hydro
 Papers: 
 Search: 
 Lectures:
 Python Theory: pep8
-Target: Wind-Hydro
-Libs: SciPy, Matplot, requests, virtualenv, datetime, pandas, numpy, git, fedora, atom
-
+Use: SciPy, Matplot, requests, virtualenv, datetime, pandas, numpy, git, fedora, atom
 Progress: data-Heraklion, optimization functions-parameters
