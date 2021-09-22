@@ -3,4 +3,4 @@ Search:
 Lectures: 
 Target: Biomass, Hydroplant
 
-Libs: SciPy, Matplot, requests, virtualenv, datetime
+Libs: SciPy, Matplot, requests, virtualenv, datetime, pandas, numpy
