@@ -3,5 +3,5 @@ Papers:
 Search: 
 Lectures:
 Python Theory: pep8
-Use: SciPy, Matplot, requests, virtualenv, datetime, pandas, numpy, git, fedora, atom
+Use: Jupyter, NumPy, SciPy, Matplot, Pandas
 Progress: data-Heraklion, optimization functions-parameters
