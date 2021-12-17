@@ -3,5 +3,5 @@ Papers:
 Search: 
 Lectures:
 Python Theory: pep8
-Use: Jupyter, NumPy, SciPy, Matplot, Pandas
+Use: Jupyter, NumPy, SciPy, Matplot, Pandas, API
 Progress: data-Heraklion, optimization functions-parameters
