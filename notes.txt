@@ -1,7 +1,6 @@
-Target: Wind-Hydro
+Target: Homer
 Papers: 
 Search: 
 Lectures:
-Python Theory: pep8
-Use: Jupyter, NumPy, SciPy, Matplot, Pandas, API
-Progress: data-Heraklion, optimization functions-parameters
+Use: Jupyter, SciPy, Matplot, Pandas
+Progress: weather-data-Heraklion, optimization functions-parameters, battery types, H/Z, typical PV
