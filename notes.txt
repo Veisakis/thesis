@@ -2,5 +2,5 @@ Target: Homer
 Papers: 
 Search: 
 Lectures:
-Use: Jupyter, SciPy, Matplot, Pandas
+Use: Unittest, SciPy, Matplot, Pandas
 Progress: weather-data-Heraklion, optimization functions-parameters, battery types, H/Z, typical PV
