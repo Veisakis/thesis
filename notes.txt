@@ -1,6 +1,6 @@
-Target: Homer
+Target: Battery on-grid
 Papers: 
-Search: 
-Lectures:
-Use: Unittest, SciPy, Matplot, Pandas
-Progress: weather-data-Heraklion, optimization functions-parameters, battery types, H/Z, typical PV
+Search: Batteries for more res
+Lectures: Video
+Use: Jupyter-Widgets, Numpy, SciPy, Matplot, Pandas
+Progress: load and pv-wt data Crete
