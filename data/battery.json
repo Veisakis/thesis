@@ -1,0 +1,11 @@
+{
+  "type" : "Lead-Carbon",
+  "voltage" : 600,
+  "min_voltage" : 540,
+  "max_voltage" : 690,
+  "capacity" : 250,
+  "power" : 500,
+  "efficiency" : 0.985,
+  "cycles" : 5000,
+  "dod" : 0.4
+}
