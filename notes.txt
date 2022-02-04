@@ -1,6 +1,0 @@
-Target: Battery on-grid
-Papers: 
-Search: Batteries for more res
-Lectures: Video
-Use: Jupyter-Widgets, Numpy, SciPy, Matplot, Pandas
-Progress: load and pv-wt data Crete
