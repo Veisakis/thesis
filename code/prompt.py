@@ -43,7 +43,7 @@ while solar <= 0:
     solar = int(input("Please provide valid input (kWp): "))
 
 
-print("\nSelect duration:")
+print("\nChoose project duration:")
 dur = int(input("[1] Day\n[2] Year\n"))
 
 while dur > 2 or choice < 1:

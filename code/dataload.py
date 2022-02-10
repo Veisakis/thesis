@@ -35,7 +35,7 @@ pv = pd.read_csv(path + "/data/pv_formatted.csv")
 def year():
     global x, xlabel, y_grid, y_pv, period
     y_grid = gridload.drop(gridload.columns[0:2], axis=1).stack().array
-    y_pv = pv['P'].array / 1_000_000 # converting to MW from W
+    y_pv = pv['P'] / 1_000_000 # converting to MW from W
 
     x = range(8760)
     xlabel = 'Hour of the day'
