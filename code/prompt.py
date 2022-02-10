@@ -41,3 +41,11 @@ solar = int(input("\nTotal installed solar power in the area (kWp): "))
 while solar <= 0:
     print("Installed kWp cannot be below zero...")
     solar = int(input("Please provide valid input (kWp): "))
+
+
+print("\nSelect duration:")
+dur = int(input("[1] Day\n[2] Year\n"))
+
+while dur > 2 or choice < 1:
+    print("\nInvalid answer. Please choose one of the below:")
+    dur = int(input("[1] Day\n[2] Year\n"))
