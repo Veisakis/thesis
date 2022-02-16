@@ -1,3 +1,17 @@
+import os
+import sys
+import json
+import math
+import requests
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+startyear = "2014"
+endyear = "2014"
+loss = "14"
+angle = "30"
 path = "/home/manousos/myfiles/thesis"
 places = {
     1: (35.512, 24.012),
@@ -37,15 +51,15 @@ else:
     lon = str(places[choice][1])
 
 
-solar = int(input("\nTotal installed solar power in the area (kWp): "))
+solar = int(input("\nTotal installed solar power in the area (Wp): "))
 while solar <= 0:
-    print("Installed kWp cannot be below zero...")
-    solar = int(input("Please provide valid input (kWp): "))
+    print("Installed Wp cannot be below zero...")
+    solar = int(input("Please provide valid input (Wp): "))
 
 
-print("\nChoose project duration:")
-dur = int(input("[1] Day\n[2] Year\n"))
+print("\nChoose examination timespan:")
+ts = int(input("[1] Day\n[2] Year\n"))
 
-while dur > 2 or choice < 1:
+while ts > 2 or ts < 1:
     print("\nInvalid answer. Please choose one of the below:")
-    dur = int(input("[1] Day\n[2] Year\n"))
+    ts = int(input("[1] Daily\n[2] Yearly\n"))
