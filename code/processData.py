@@ -4,9 +4,10 @@ import numpy as np
 import math
 import json
 
+
 class Battery:
     def __init__(self, type, voltage, capacity_kwh, power_kw,
-                    efficiency, cycles, dod, isbattery_pack=0):
+                 efficiency, cycles, dod, isbattery_pack=0):
         self.type = type
         self.voltage = voltage
         self.nominal_capacity = capacity_kwh * 1000
@@ -32,7 +33,7 @@ class Battery:
         else:
             self.type = self.type + " Pack"
             self.voltage = self.voltage * inSeries
-            self.nominal_capacity = self.nominal_capacity  * number
+            self.nominal_capacity = self.nominal_capacity * number
             self.nominal_power = self.nominal_power * number
             self.isbattery_pack = 1
 
@@ -53,8 +54,7 @@ class Battery:
             data = json.load(f)
 
         return cls(data['type'], data['voltage'], data['capacity_kwh'],
-                 data['power_kw'], data['efficiency'], data['cycles'], data['dod'])
-
+                   data['power_kw'], data['efficiency'], data['cycles'], data['dod'])
 
 
 def wasted_energy(gridload, pv):
