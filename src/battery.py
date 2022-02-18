@@ -1,8 +1,7 @@
-import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
-import math
+'''Representation of single battery or battery pack'''
+
 import json
+import math
 
 
 class Battery:
@@ -55,23 +54,3 @@ class Battery:
 
         return cls(data['type'], data['voltage'], data['capacity_kwh'],
                    data['power_kw'], data['efficiency'], data['cycles'], data['dod'])
-
-
-def wasted_energy(gridload, pv):
-    balance = np.array(pv.array - gridload.array)
-
-    excess_power = balance[balance > 0].sum()
-    excess_power_duration = balance[balance > 0].size
-    excess_energy = excess_power * excess_power_duration
-
-    return excess_energy
-
-
-def flattenCurve(gridload, power, battery):
-    deviation = np.abs(gridload - gridload.mean())
-
-    while battery.stateOfCharge() > battery.dod:
-        deviation[deviation.argmax()] = deviation.max() - power
-        battery.discharge(power * 1)
-
-    return deviation
