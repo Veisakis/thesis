@@ -112,7 +112,7 @@ solar_batteries = bat.batteriesNeeded(solar_energy)
 target_batteries = bat.batteriesNeeded(target_energy)
 
 print(f'Daily Solar Production (Wh){solar_energy:.>60.2f}')
-print(f'Batteries Required to Store{solar_batteries:.>60}\n')
+print(f'Batteries Required to Store this energy{solar_batteries:.>48}\n')
 
 print(f'Energy Required to flatten the Curve (Wh){target_energy:.>46.2f}')
 print(f'Batteries Required to Store this energy{target_batteries:.>48}\n')
