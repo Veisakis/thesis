@@ -16,6 +16,14 @@ with open('/home/manousos/myfiles/thesis/data/battery.json', 'r') as f:
     print("Battery can store {} kWh in it's lifetime".format(bat_energy_perlifetime))
 
 
+print("\nChoose examination timespan:")
+timespan_selection = int(input("[1] Day\n[2] Year\n"))
+
+while timespan_selection > 2 or timespan_selection < 1:
+    print("\nInvalid answer. Please choose one of the below:")
+    timespan_selection = int(input("[1] Daily\n[2] Yearly\n"))
+
+
 ### Test Sample: Battery and Daily Gridload-PV
 bat1 = Battery.from_json("/home/manousos/myfiles/thesis/data/lead_carbon.json")
 

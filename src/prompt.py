@@ -12,6 +12,7 @@ loss = "14"
 angle = "30"
 endyear = "2014"
 startyear = "2014"
+timespan = range(24)
 
 path = "/home/manousos/myfiles/thesis"
 
@@ -58,11 +59,3 @@ solar = int(input("\nTotal installed solar power in the area (Wp): "))
 while solar <= 0:
     print("Installed Wp cannot be below zero...")
     solar = int(input("Please provide valid input (Wp): "))
-
-
-print("\nChoose examination timespan:")
-timespan_selection = int(input("[1] Day\n[2] Year\n"))
-
-while timespan_selection > 2 or timespan_selection < 1:
-    print("\nInvalid answer. Please choose one of the below:")
-    timespan_selection = int(input("[1] Daily\n[2] Yearly\n"))

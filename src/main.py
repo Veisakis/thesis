@@ -17,6 +17,7 @@ loss = "14"
 angle = "30"
 endyear = "2014"
 startyear = "2014"
+timespan = range(24)
 
 path = "/home/manousos/myfiles/thesis"
 
@@ -65,14 +66,6 @@ while solar <= 0:
     solar = int(input("Please provide valid input (Wp): "))
 
 
-print("\nChoose examination timespan:")
-timespan_selection = int(input("[1] Day\n[2] Year\n"))
-
-while timespan_selection > 2 or timespan_selection < 1:
-    print("\nInvalid answer. Please choose one of the below:")
-    timespan_selection = int(input("[1] Daily\n[2] Yearly\n"))
-
-
 try:
     gridload_raw = pd.read_csv(path + "/data/moires_gridload.csv", sep=":")
 except FileNotFoundError:
@@ -80,7 +73,6 @@ except FileNotFoundError:
     sys.exit()
 else:
     print("\nLoaded gridload data for the area.")
-
 
 print("Fetching PV data from PV-GIS...\n")
 url = ("https://re.jrc.ec.europa.eu/api/seriescalc?lat="
@@ -97,39 +89,45 @@ except ConnectionError:
 else:
     print("\nConnection Established!\n")
     os.system("curl \'"+url+"\' | tail -n+11 | head -n-11 >"+path+"/data/pv_production.csv")
-    print("\nSaved data to file pv_production.csv")
-
+    print("\nSaved data to file pv_production.csv\n")
 
 try:
     pv_raw = pd.read_csv(path + "/data/pv_production.csv")
 except FileNotFoundError as err:
     sys.exit(err)
 
-
-pv, gridload, timespan = processData.conditionalFormatting(pv_raw, gridload_raw,
-                                                           timespan_selection)
-
 try:
     bat = Battery.from_json("/home/manousos/myfiles/thesis/data/lead_carbon.json")
 except Exception as err:
-    print("Failed to instantiate battery object from json file...")
+    print("\nFailed to instantiate battery object from json file...\n")
     sys.exit(err)
-else:
-    print("Created battery object!\n")
 
-wasted_energy = processData.wastedEnergy(pv, gridload)
-numBatteries = bat.batteriesNeeded(wasted_energy)
 
-print(f"{wasted_energy:.2f} Wh of energy are wasted in a {'day' if timespan_selection == 1 else 'year'}!")
-print(f"To store this energy, {numBatteries} {'batteries' if numBatteries > 1 else 'battery'} of the given type {'are' if numBatteries > 1 else 'is'} needed.\n")
+pv, gridload = processData.formatData(pv_raw, gridload_raw)
 
-bat.batteryPack(numBatteries)
-gridload_flattened = processData.flattenCurve(gridload, bat.nominal_power, bat)
+solar_energy = processData.solarProduction(pv)
+target_energy = processData.targetEnergy(gridload)
+
+solar_batteries = bat.batteriesNeeded(solar_energy)
+target_batteries = bat.batteriesNeeded(target_energy)
+
+print(f'Daily Solar Production (Wh){solar_energy:.>60.2f}')
+print(f'Batteries Required to Store{solar_batteries:.>60}\n')
+
+print(f'Energy Required to flatten the Curve (Wh){target_energy:.>46.2f}')
+print(f'Batteries Required to Store this energy{target_batteries:.>48}\n')
+
+minimum_batteries, optimizedBatteryPack, gridload_flattened = processData.batteriesOptimize(target_batteries,
+                                                                                            solar_batteries, gridload)
+
+print(f'\n{"Optimization Results":-^65}')
+print(f'Batteries: {minimum_batteries}')
+print(f'State of Charge (after grid stabilization): {optimizedBatteryPack.stateOfCharge() * 100:.2f}%')
+print(f'Total Cost: {format(optimizedBatteryPack.cost * minimum_batteries, ",")}€\n')
 
 '''Plot'''
 plt.style.use('classic')
 fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
-
 
 ax1.plot(timespan, pv, linestyle='dashed',
          color='darkolivegreen', label='PV power output')
@@ -156,7 +154,7 @@ ax2.plot(timespan, gridload_flattened,
          color='darkolivegreen', label='Grid Load with battery storage')
 
 ax2.fill_between(timespan, gridload, color='saddlebrown', alpha=0.50)
-ax2.fill_between(timespan, gridload_flattened, color='olive', alpha=0.60)
+ax2.fill_between(timespan, gridload_flattened, color='olive', alpha=0.30)
 
 ax2.set_xticks(timespan)
 ax2.set_xlim(timespan[0], timespan[-1])
@@ -168,6 +166,6 @@ ax2.set_title('Grid load "with" and "without" Batteries')
 ax2.grid(True)
 ax2.legend(loc='upper left')
 
-
+plt.tight_layout()
 plt.show()
 '''Plot'''

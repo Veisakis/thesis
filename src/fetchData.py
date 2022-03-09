@@ -32,3 +32,11 @@ try:
     pv_raw = pd.read_csv(path + "/data/pv_production.csv")
 except FileNotFoundError as err:
     sys.exit(err)
+
+
+try:
+    bat = Battery.from_json("/home/manousos/myfiles/thesis/data/lead_carbon.json")
+except Exception as err:
+    print("Failed to instantiate battery object from json file...")
+    sys.exit(err)
+

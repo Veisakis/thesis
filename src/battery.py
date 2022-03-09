@@ -6,7 +6,7 @@ import math
 
 class Battery:
     def __init__(self, type, voltage, capacity_kwh, power_kw,
-                 efficiency, cycles, dod, isbattery_pack=0):
+                 efficiency, cycles, dod, cost, isbattery_pack=0):
         self.type = type
         self.voltage = voltage
         self.nominal_capacity = capacity_kwh * 1000
@@ -14,6 +14,7 @@ class Battery:
         self.efficiency = efficiency
         self.cycles = cycles
         self.dod = dod
+        self.cost = cost
         self.isbattery_pack = isbattery_pack
 
         self.capacity = self.nominal_capacity * self.efficiency
@@ -38,6 +39,20 @@ class Battery:
 
             self.capacity = self.capacity * number
 
+    def canCharge(self, energy):
+        potential_soc = (self.capacity + energy) / self.nominal_capacity
+        if potential_soc > 1:
+            return 0
+        else:
+            return 1
+
+    def canDischarge(self, energy):
+        potential_soc = (self.capacity - energy) / self.nominal_capacity
+        if potential_soc < self.dod:
+            return 0
+        else:
+            return 1
+
     def charge(self, energy):
         self.capacity += energy
 
@@ -53,4 +68,5 @@ class Battery:
             data = json.load(f)
 
         return cls(data['type'], data['voltage'], data['capacity_kwh'],
-                   data['power_kw'], data['efficiency'], data['cycles'], data['dod'])
+                   data['power_kw'], data['efficiency'], data['cycles'], 
+                   data['dod'], data['cost'])

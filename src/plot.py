@@ -27,7 +27,7 @@ ax2.plot(timespan, gridload_flattened,
          color='darkolivegreen', label='Grid Load with battery storage')
 
 ax2.fill_between(timespan, gridload, color='saddlebrown', alpha=0.50)
-ax2.fill_between(timespan, gridload_flattened, color='olive', alpha=0.60)
+ax2.fill_between(timespan, gridload_flattened, color='olive', alpha=0.30)
 
 ax2.set_xticks(timespan)
 ax2.set_xlim(timespan[0], timespan[-1])
@@ -39,5 +39,5 @@ ax2.set_title('Grid load "with" and "without" Batteries')
 ax2.grid(True)
 ax2.legend(loc='upper left')
 
-
+plt.tight_layout()
 plt.show()
