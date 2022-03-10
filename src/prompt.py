@@ -25,22 +25,32 @@ places = {
 }
 
 
+os.system("clear")
 os.system("figlet TEI Crete")
-print("Select pre-defined place from the list below (1-5)")
+
+print("Choose storage method:")
+method = int(input("[1] Store all energy produced\n"
+                   + "[2] Store only excess energy\n"))
+                   
+while method > 2 or method < 1:
+    print("\nInvalid answer. Please choose one of the below:")
+    method = int(input("[1] Store all energy produced\n"
+                       + "[2] Store only excess energy\n"))
+                       
+print("\nSelect pre-defined place from the list below (1-5)")
 print("or press 6 to provide custom coordinates:\n")
 
-choice = int(input("[1] Chania\n[2] Rethymno\n"
+place = int(input("[1] Chania\n[2] Rethymno\n"
                    + "[3] Heraklio\n[4] Ag.Nikolaos\n"
                    + "[5] Moires\n[6] Custom\n"))
 
-while choice > 6 or choice < 1:
+while place > 6 or place < 1:
     print("\nInvalid answer. Please choose one of the below:")
-    choice = int(input("[1] Chania\n[2] Rethymno\n"
+    place = int(input("[1] Chania\n[2] Rethymno\n"
                        + "[3] Heraklio\n[4] Ag.Nikolaos\n"
                        + "[5] Moires\n[6] Custom\n"))
 
-
-if choice == 6:
+if place == 6:
     lat = input("Latitude of area: ")
     while float(lat) < -90.0 or float(lat) > 90.0:
         print("Invalid range for latitude...")
@@ -51,8 +61,8 @@ if choice == 6:
         print("Invalid range for longitude...")
         lat = input("Please provide valid input (-180, 180): ")
 else:
-    lat = str(places[choice][0])
-    lon = str(places[choice][1])
+    lat = str(places[place][0])
+    lon = str(places[place][1])
 
 
 solar = int(input("\nTotal installed solar power in the area (Wp): "))
