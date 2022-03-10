@@ -1,7 +1,6 @@
 plt.style.use('classic')
 fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
 
-
 ax1.plot(timespan, pv, linestyle='dashed',
          color='darkolivegreen', label='PV power output')
 ax1.plot(timespan, gridload,
@@ -25,6 +24,9 @@ ax2.plot(timespan, gridload,
          color='saddlebrown', label='Grid Load without battery storage')
 ax2.plot(timespan, gridload_flattened,
          color='darkolivegreen', label='Grid Load with battery storage')
+ax2.axhline(y=gridload_mean, color="red", 
+            linestyle='--', alpha=0.50,
+            label='Gridload Mean Value')
 
 ax2.fill_between(timespan, gridload, color='saddlebrown', alpha=0.50)
 ax2.fill_between(timespan, gridload_flattened, color='olive', alpha=0.30)

@@ -42,9 +42,24 @@ def targetEnergy(gridload):
     return energy
 
 
+def solarAid(pv, gridload):
+    pv_sample = np.array(pv)
+    gridload_sample = np.array(gridload)
+    span = range(len(pv_sample))
+
+    for index in span:
+        if pv_sample[index] > gridload_sample[index]:
+            gridload_sample[index] = 0
+        else:
+            gridload_sample[index] -= pv_sample[index]
+    return gridload_sample
+
+
 def flattenCurve(gridload, battery):
     gridload_sample = np.array(gridload)
-    deviation = gridload_sample - gridload_sample.mean()
+    gridload_mean = gridload_sample.mean()
+
+    deviation = gridload_sample - gridload_mean
     sortedIndeces = np.flip(np.argsort(deviation))
 
     for index in sortedIndeces:
@@ -56,7 +71,7 @@ def flattenCurve(gridload, battery):
             deviation[index] = 0
             gridload_sample[index] -= energy
             battery.discharge(energy)
-    return gridload_sample, deviation
+    return gridload_mean, gridload_sample, deviation
 
 
 def batteriesOptimize(target, production, gridload):
@@ -69,7 +84,7 @@ def batteriesOptimize(target, production, gridload):
         testBat = Battery.from_json("/home/manousos/myfiles/thesis/data/lead_carbon.json")
         testBat.batteryPack(batteries)
 
-        gridload_flattened, deviation = flattenCurve(gridload, testBat)
+        gridload_mean, gridload_flattened, deviation = flattenCurve(gridload, testBat)
         if len(deviation[deviation > 0]) == 0:
             break
-    return batteries, testBat, gridload_flattened
+    return batteries, testBat, gridload_mean, gridload_flattened

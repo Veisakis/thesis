@@ -52,3 +52,13 @@ print(wasted_energy, numBatteries)
 bat1.batteryPack(numBatteries)
 print(bat1.nominal_power)
 gridload_flattened = flattenCurve(gridload, 1_000_000, bat1)
+import logging
+
+logging.basicConfig(filename="thesis.log",
+                    level=logging.DEBUG,
+                    format="%(levelname)s: %(message)s",
+                    filemode='w')
+
+logger = logging.getLogger()
+logger.info("Hello Log!")
+logger.debug("Variable a has value of 10")

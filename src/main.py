@@ -31,21 +31,30 @@ places = {
 
 os.system("clear")
 os.system("figlet TEI Crete")
-print("Select pre-defined place from the list below (1-5)")
+
+print("Choose storage method:")
+method = int(input("[1] Store all energy produced\n"
+                   + "[2] Store only excess energy\n"))
+                   
+while method > 2 or method < 1:
+    print("\nInvalid answer. Please choose one of the below:")
+    method = int(input("[1] Store all energy produced\n"
+                       + "[2] Store only excess energy\n"))
+                       
+print("\nSelect pre-defined place from the list below (1-5)")
 print("or press 6 to provide custom coordinates:\n")
 
-choice = int(input("[1] Chania\n[2] Rethymno\n"
+place = int(input("[1] Chania\n[2] Rethymno\n"
                    + "[3] Heraklio\n[4] Ag.Nikolaos\n"
                    + "[5] Moires\n[6] Custom\n"))
 
-while choice > 6 or choice < 1:
+while place > 6 or place < 1:
     print("\nInvalid answer. Please choose one of the below:")
-    choice = int(input("[1] Chania\n[2] Rethymno\n"
+    place = int(input("[1] Chania\n[2] Rethymno\n"
                        + "[3] Heraklio\n[4] Ag.Nikolaos\n"
                        + "[5] Moires\n[6] Custom\n"))
 
-
-if choice == 6:
+if place == 6:
     lat = input("Latitude of area: ")
     while float(lat) < -90.0 or float(lat) > 90.0:
         print("Invalid range for latitude...")
@@ -56,9 +65,8 @@ if choice == 6:
         print("Invalid range for longitude...")
         lat = input("Please provide valid input (-180, 180): ")
 else:
-    lat = str(places[choice][0])
-    lon = str(places[choice][1])
-
+    lat = str(places[place][0])
+    lon = str(places[place][1])
 
 solar = int(input("\nTotal installed solar power in the area (Wp): "))
 while solar <= 0:
@@ -105,24 +113,44 @@ except Exception as err:
 
 pv, gridload = processData.formatData(pv_raw, gridload_raw)
 
-solar_energy = processData.solarProduction(pv)
 target_energy = processData.targetEnergy(gridload)
-
-solar_batteries = bat.batteriesNeeded(solar_energy)
 target_batteries = bat.batteriesNeeded(target_energy)
 
-print(f'Daily Solar Production (Wh){solar_energy:.>60.2f}')
-print(f'Batteries Required to Store this energy{solar_batteries:.>48}\n')
+formatted_target_energy = format(round(target_energy, 2), ",")
 
-print(f'Energy Required to flatten the Curve (Wh){target_energy:.>46.2f}')
+print(f'Energy Required to flatten the Curve (Wh){formatted_target_energy:.>46}')
 print(f'Batteries Required to Store this energy{target_batteries:.>48}\n')
 
-minimum_batteries, optimizedBatteryPack, gridload_flattened = processData.batteriesOptimize(target_batteries,
-                                                                                            solar_batteries, gridload)
+if method == 1:
+    solar_energy = processData.solarProduction(pv)
+    solar_batteries = bat.batteriesNeeded(solar_energy)
+
+    formatted_solar_energy = format(round(solar_energy, 2), ",")
+
+    print(f'Daily Solar Production (Wh){formatted_solar_energy:.>60}')
+    print(f'Batteries Required to Store this energy{solar_batteries:.>48}\n')
+
+    minimum_batteries, optimizedBatteryPack, gridload_mean, gridload_flattened = processData.batteriesOptimize(target_batteries,
+                                                                                                               solar_batteries, gridload)
+else:
+    solar_energy = processData.solarProduction(pv)
+    excess_solar_energy = processData.wastedEnergy(pv, gridload)
+    solar_batteries = bat.batteriesNeeded(excess_solar_energy)
+
+    formatted_solar_energy = format(round(solar_energy, 2), ",")
+    formatted_excess_solar_energy = format(round(excess_solar_energy, 2), ",")
+
+    print(f'Daily Solar Production (Wh){formatted_solar_energy:.>60}')
+    print(f'Excess Daily Solar Production (Wh){formatted_excess_solar_energy:.>53}')
+    print(f'Batteries Required to Store this excess energy{solar_batteries:.>41}\n')
+
+    minimum_batteries, optimizedBatteryPack, gridload_mean, gridload_flattened = processData.batteriesOptimize(target_batteries,
+                                                                                                               solar_batteries,
+                                                                                                               processData.solarAid(pv, gridload))
 
 print(f'\n{"Optimization Results":-^65}')
 print(f'Batteries: {minimum_batteries}')
-print(f'State of Charge (after grid stabilization): {optimizedBatteryPack.stateOfCharge() * 100:.2f}%')
+print(f'State of Charge (after grid stabilization): {optimizedBatteryPack.stateOfCharge()*100 if minimum_batteries != 0 else 0:.2f}%')
 print(f'Total Cost: {format(optimizedBatteryPack.cost * minimum_batteries, ",")}€\n')
 
 '''Plot'''
@@ -140,7 +168,7 @@ ax1.fill_between(timespan, pv, gridload,
 
 ax1.set_xticks(timespan)
 ax1.set_xlim(timespan[0], timespan[-1])
-
+method
 ax1.set_ylabel('Power (W)')
 ax1.set_title('Grid load and PV power output curves')
 
@@ -152,6 +180,9 @@ ax2.plot(timespan, gridload,
          color='saddlebrown', label='Grid Load without battery storage')
 ax2.plot(timespan, gridload_flattened,
          color='darkolivegreen', label='Grid Load with battery storage')
+ax2.axhline(y=gridload_mean, color="red", 
+            linestyle='--', alpha=0.50,
+            label='Gridload Mean Value')
 
 ax2.fill_between(timespan, gridload, color='saddlebrown', alpha=0.50)
 ax2.fill_between(timespan, gridload_flattened, color='olive', alpha=0.30)

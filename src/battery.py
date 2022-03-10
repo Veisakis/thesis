@@ -28,9 +28,7 @@ class Battery:
     def batteryPack(self, number, inSeries=1):
         assert inSeries > 0, "Cannot be less than 1 battery in series!"
 
-        if number < 1:
-            print("Battery pack must include more than 1 batteries.")
-        else:
+        if number > 0:
             self.type = self.type + " Pack"
             self.voltage = self.voltage * inSeries
             self.nominal_capacity = self.nominal_capacity * number
