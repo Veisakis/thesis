@@ -1,0 +1,9 @@
+{
+  "type" : "Lithium-Ion",
+  "voltage" : 691.2,
+  "capacity_kwh" : 311,
+  "efficiency" : 0.985,
+  "cycles" : 6000,
+  "dod" : 0.6,
+  "cost_per_wh": 0.5
+}

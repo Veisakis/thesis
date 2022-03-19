@@ -1,0 +1,13 @@
+---Economics---
+25 years project lifetime
+Discount Rate: 6% (επιτόκιο αναγωγής)
+OnM (Operation and Maintanance) cost: 1% of initial cost (ράντα - χρησιμοποίηση και δημιουργία αντίστοιχου γραφήματος)
+
+Calculate battery lifetime by it's cycles
+Include the cost of a new battery pack (i.e. at the 14th year)
+
+Wind Turbine: 1,200,000.00€/MW
+PV: 1,000,000.00€/MW
+
+Lead-Carbon: 300,000.00€/MWh (~13.5-15 years lifetime for 5000cycles)
+Lithium-Ion: 500,000.00€/MWh

@@ -13,7 +13,7 @@ else:
 print("Fetching PV data from PV-GIS...\n")
 url = ("https://re.jrc.ec.europa.eu/api/seriescalc?lat="
        + lat+"&lon="+lon+"&startyear="+startyear+"&endyear="
-       + endyear+"&peakpower="+str(solar/1000)+"&angle="+angle
+       + endyear+"&peakpower="+str(solar)+"&angle="+angle
        + "&loss="+loss+"&pvcalculation=1")
 
 try:
