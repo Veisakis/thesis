@@ -5,14 +5,19 @@ import math
 import requests
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+
+from matplotlib import pyplot as plt
+from requests.exceptions import ConnectionError
+
+import processData
+from battery import Battery
 
 
 loss = "14"
 angle = "30"
 endyear = "2014"
 startyear = "2014"
-timespan = range(24)
+timespan = range(8760)
 
 path = "/home/manousos/myfiles/thesis"
 
@@ -24,11 +29,10 @@ places = {
     5: (35.050, 24.877)
 }
 
-
 os.system("clear")
 os.system("figlet TEI Crete")
 
-print("Choose battery type:")
+print("\nChoose battery type:")
 type = int(input("[1] Lead-Carbon\n"
                  + "[2] Lithium-Ion\n"))
 
@@ -36,6 +40,11 @@ while type > 2 or type < 1:
     print("\nInvalid answer. Please choose one of the below:")
     type = int(input("[1] Lead-Carbon\n"
                      + "[2] Lithium-Ion\n"))
+
+if type == 1:
+    bat_type = path + "/data/lead_carbon.json"
+else:
+    bat_type = path + "/data/lithium_ion.json"
 
 print("\nGive a search range for the number of batteries:")
 min = int(input("Min: "))
@@ -48,7 +57,7 @@ while min < 1:
 while max < min:
     print("\nMax must be greater than min.")
     max = int(input("Max: "))
-
+    
 print("\nSelect pre-defined place from the list below (1-5)")
 print("or press 6 to provide custom coordinates:")
 
@@ -75,7 +84,6 @@ if place == 6:
 else:
     lat = str(places[place][0])
     lon = str(places[place][1])
-
 
 solar = int(input("\nTotal installed solar power in the area (kWp): "))
 while solar <= 0:

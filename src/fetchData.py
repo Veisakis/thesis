@@ -9,7 +9,6 @@ except FileNotFoundError:
 else:
     print("\nLoaded gridload data for the area.")
 
-
 print("Fetching PV data from PV-GIS...\n")
 url = ("https://re.jrc.ec.europa.eu/api/seriescalc?lat="
        + lat+"&lon="+lon+"&startyear="+startyear+"&endyear="
@@ -25,18 +24,15 @@ except ConnectionError:
 else:
     print("\nConnection Established!\n")
     os.system("curl \'"+url+"\' | tail -n+11 | head -n-11 >"+path+"/data/pv_production.csv")
-    print("\nSaved data to file pv_production.csv")
-
+    print("\nSaved data to file pv_production.csv\n")
 
 try:
     pv_raw = pd.read_csv(path + "/data/pv_production.csv")
 except FileNotFoundError as err:
     sys.exit(err)
 
-
 try:
-    bat = Battery.from_json("/home/manousos/myfiles/thesis/data/lead_carbon.json")
+    bat = Battery.from_json(bat_type)
 except Exception as err:
-    print("Failed to instantiate battery object from json file...")
+    print("\nFailed to instantiate battery object from json file...\n")
     sys.exit(err)
-

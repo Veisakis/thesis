@@ -5,6 +5,7 @@ from battery import Battery
 
 
 def formatData(pv_raw, gridload_raw):
+    '''Convert raw data to the appropriate form'''
     gridload = gridload_raw.drop(gridload_raw.columns[0:2], axis=1).reset_index(drop=True) * 1_000_000
     gridload.columns = list(range(24))
     gridload_mean = gridload.stack().mean()
@@ -21,6 +22,7 @@ def formatData(pv_raw, gridload_raw):
 
 
 def wastedEnergy(pv, gridload, battery):
+    '''Calculate excess energy produced by renewables and charge the battery with it'''
     balance = np.array(pv) - np.array(gridload)
     excess_energy = balance[balance > 0]
 
@@ -31,6 +33,7 @@ def wastedEnergy(pv, gridload, battery):
 
 
 def solarAid(pv, gridload):
+    '''Subtract energy produced by renewables from the gridload one-by-one'''
     pv_sample = np.array(pv)
     gridload_sample = np.array(gridload)
 
@@ -43,6 +46,7 @@ def solarAid(pv, gridload):
 
 
 def flattenCurve(gridload, gridload_mean, battery):
+    '''Subtract energy stored in batteries from the gridload's peaks'''
     gridload_sample = np.array(gridload)
     deviation = gridload_sample - gridload_mean
     sortedIndeces = np.flip(np.argsort(deviation))
@@ -60,6 +64,7 @@ def flattenCurve(gridload, gridload_mean, battery):
 
 
 def simResults(gridload, gridload_mean, battery):
+    '''Calculate how much has the curve flattened, based on the distance from the median'''
     energy = 0
     deviation = gridload - gridload_mean
     sortedIndeces = np.flip(np.argsort(deviation))
@@ -70,6 +75,7 @@ def simResults(gridload, gridload_mean, battery):
 
 
 def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, battery):
+    '''Run all the above functions, for each scenario of battery-pack size'''
     print(f'\n{"Batteries":<10}{"System Cost":>25}{"Energy Left":>40}\n')
     
     batteries_sample = list(range(sample_min, sample_max))
