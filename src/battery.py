@@ -14,7 +14,8 @@ class Battery:
         self.cycles = cycles
         self.dod = dod
         
-        self.cost = self.nominal_capacity * cost_per_wh
+        self.unit_cost = self.nominal_capacity * cost_per_wh
+        self.cost = self.unit_cost
         self.isbattery_pack = isbattery_pack
         self.number = number
         self.capacity = self.nominal_capacity * self.efficiency * (1-self.dod)
@@ -34,7 +35,7 @@ class Battery:
 
         self.number = number
         self.isbattery_pack = 1
-        self.cost = self.cost * number
+        self.cost = self.unit_cost * number
         self.voltage = self.voltage * inSeries
         self.nominal_capacity = self.nominal_capacity * number
         self.capacity = self.nominal_capacity * self.efficiency * (1-self.dod) * number

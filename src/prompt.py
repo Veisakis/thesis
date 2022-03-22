@@ -31,10 +31,16 @@ places = {
 
 os.system("clear")
 os.system("figlet TEI Crete")
+print("'How many batteries need to be installed, to handle more renewables on the grid?'\n"
+      + "An optimization script to solve this problem.\n"
+      + "\nOptimization ends when either:\n"
+      + "(1) No more renewable energy produced, is wasted.\n"
+      + "(2) Renewables and batteries can supply 100% of gridload.\n"
+      + "(3) Cost limit is reached (if set).\n")
 
 print("\nChoose battery type:")
-type = int(input("[1] Lead-Carbon\n"
-                 + "[2] Lithium-Ion\n"))
+type = int(input("[1] Lead-Carbon (300,000.00€/MWh)\n"
+                 + "[2] Lithium-Ion (500,000.00€/MWh)\n"))
 
 while type > 2 or type < 1:
     print("\nInvalid answer. Please choose one of the below:")
@@ -46,46 +52,24 @@ if type == 1:
 else:
     bat_type = path + "/data/lithium_ion.json"
 
-print("\nGive a search range for the number of batteries:")
-min = int(input("Min: "))
-max = int(input("Max: "))
+cost = int(input("\nSet cost limit (if none, enter 0): "))
+while cost < 0:
+    print("\nInvalid answer!")
+    cost = int(input("Set cost limit (if none, enter 0): "))
 
-while min < 1:
-    print("\nBatteries must be more than or equal to 1.")
-    min = int(input("Min: "))
-
-while max < min:
-    print("\nMax must be greater than min.")
-    max = int(input("Max: "))
-    
-print("\nSelect pre-defined place from the list below (1-5)")
-print("or press 6 to provide custom coordinates:")
-
+print("\nSelect examination area from the list below (1-5)")
 place = int(input("[1] Chania\n[2] Rethymno\n"
-                  + "[3] Heraklio\n[4] Ag.Nikolaos\n"
-                  + "[5] Moires\n[6] Custom\n"))
+                  + "[3] Heraklio\n[4] Ag.Nikolaos\n[5] Moires\n"))
 
 while place > 6 or place < 1:
     print("\nInvalid answer. Please choose one of the below:")
     place = int(input("[1] Chania\n[2] Rethymno\n"
-                      + "[3] Heraklio\n[4] Ag.Nikolaos\n"
-                      + "[5] Moires\n[6] Custom\n"))
+                      + "[3] Heraklio\n[4] Ag.Nikolaos\n[5] Moires\n"))
 
-if place == 6:
-    lat = input("Latitude of area: ")
-    while float(lat) < -90.0 or float(lat) > 90.0:
-        print("Invalid range for latitude...")
-        lat = input("Please provide valid input (-90, 90): ")
+lat = str(places[place][0])
+lon = str(places[place][1])
 
-    lon = input("Longitude of area: ")
-    while float(lon) < -180.0 or float(lon) > 180.0:
-        print("Invalid range for longitude...")
-        lat = input("Please provide valid input (-180, 180): ")
-else:
-    lat = str(places[place][0])
-    lon = str(places[place][1])
-
-solar = int(input("\nTotal installed solar power in the area (kWp): "))
+solar = int(input("\nHow much solar is to be placed in the area (kWp)? "))
 while solar <= 0:
     print("Installed kWp cannot be below zero...")
     solar = int(input("Please provide valid input (kWp): "))

@@ -24,9 +24,6 @@ ax2.plot(timespan, gridload,
          color='saddlebrown', label='Grid Load without battery storage')
 ax2.plot(timespan, gridload_flattened,
          color='darkolivegreen', label='Grid Load with battery storage')
-ax2.axhline(y=gridload_mean, color="red", 
-            linestyle='--', alpha=0.50,
-            label='Gridload Mean Value')
 
 ax2.fill_between(timespan, gridload, color='saddlebrown', alpha=0.50)
 ax2.fill_between(timespan, gridload_flattened, color='olive', alpha=0.30)

@@ -3,10 +3,13 @@ import pandas as pd
 
 from battery import Battery
 
+year = range(365)
+
 
 def formatData(pv_raw, gridload_raw):
     '''Convert raw data to the appropriate form'''
-    gridload = gridload_raw.drop(gridload_raw.columns[0:2], axis=1).reset_index(drop=True) * 1_000_000
+    gridload = gridload_raw.drop(
+        gridload_raw.columns[0:2], axis=1).reset_index(drop=True) * 1_000_000
     gridload.columns = list(range(24))
     gridload_mean = gridload.stack().mean()
 
@@ -48,59 +51,80 @@ def solarAid(pv, gridload):
 def flattenCurve(gridload, gridload_mean, battery):
     '''Subtract energy stored in batteries from the gridload's peaks'''
     gridload_sample = np.array(gridload)
+
     deviation = gridload_sample - gridload_mean
     sortedIndeces = np.flip(np.argsort(deviation))
 
     for index in sortedIndeces:
-        if battery.stateOfCharge() > battery.dod and deviation[index] > 0:
-            energy = deviation[index]
-            if battery.canDischarge(energy) == 0:
-                continue
-
+        energy = deviation[index]
+        if energy > 0 and battery.canDischarge(energy) == 1:
             deviation[index] = 0
             gridload_sample[index] -= energy
             battery.discharge(energy)
     return gridload_sample
 
 
-def simResults(gridload, gridload_mean, battery):
-    '''Calculate how much has the curve flattened, based on the distance from the median'''
-    energy = 0
-    deviation = gridload - gridload_mean
-    sortedIndeces = np.flip(np.argsort(deviation))
-    for index in sortedIndeces:
-        if deviation[index] > 0:
-            energy += deviation[index]
-    return energy
+def isReached(wasted_energy, gridload_aided, gridload_flattened):
+    '''Calculate if zero energy waste goal is reached'''
+    excess_energy_produced = np.array(wasted_energy).sum()
+    energy_supplied = np.array(gridload_aided).sum() - np.array(gridload_flattened).sum()
+    return excess_energy_produced - energy_supplied
 
 
-def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, battery):
-    '''Run all the above functions, for each scenario of battery-pack size'''
-    print(f'\n{"Batteries":<10}{"System Cost":>25}{"Energy Left":>40}\n')
-    
+def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, battery, cost_limit):
+    '''Find optimized result by applying all of the above functions to each battery-pack size'''
+    found = 0
+    gridload_median = gridload_mean #Instead of using global
     batteries_sample = list(range(sample_min, sample_max))
+
+    print(f'\nBatteries{"System Cost":>30}{"Energy Wasted":>40}\n')
+
     for batteries in batteries_sample:
+        wasted_energy = []
+        gridload_aided = []
+        gridload_flattened = []
+
         battery.batteryPack(batteries)
-        gridload_flat = []
-        
-        for day in range(365):
+
+        for day in year:
             pv_day = pv.iloc[day]
             gridload_day = gridload.iloc[day]
-            wastedEnergy(pv_day, gridload_day, battery)
-            gridload_day = solarAid(pv_day, gridload_day)
-            gridload_flt = flattenCurve(gridload_day, gridload_mean, battery)
-            gridload_flat.append(gridload_flt)
-        
-        df = pd.DataFrame(gridload_flat)
-        gridload_flattened = df.stack().reset_index(drop=True)
 
-        energy_left = simResults(gridload_flattened, gridload_mean, battery)
-        print(f'{battery.number:<10}\t{format(battery.cost, ","):^20} €\t{format(energy_left, ","):>40} Wh')
+            waste_energy = wastedEnergy(pv_day, gridload_day, battery)
+            gridload_aid = solarAid(pv_day, gridload_day)
+            gridload_flat = flattenCurve(gridload_aid, gridload_median, battery)
+
+            wasted_energy.append(waste_energy)
+            gridload_aided.append(gridload_aid)
+            gridload_flattened.append(gridload_flat)
         
-        if energy_left == 0:
+        gridload_aided = pd.DataFrame(gridload_aided)
+        gridload_aided = gridload_aided.stack().reset_index(drop=True)
+        gridload_flattened = pd.DataFrame(gridload_flattened)
+        gridload_flattened = gridload_flattened.stack().reset_index(drop=True)
+
+        gridload_flattened_max = int(gridload_flattened.max())
+        gridload_median = int(gridload_median)
+        
+        wasted_energy = isReached(wasted_energy, gridload_aided, gridload_flattened)
+                
+        if gridload_flattened_max <= gridload_median:
+            gridload_median = gridload_flattened.mean()
+            
+        if cost_limit != 0:
+            if battery.unit_cost * (batteries+1) >= cost_limit:
+                found = 1
+
+        if wasted_energy <= 0:
+            wasted_energy = 0
+            found = 2
+        
+        if gridload_flattened_max == 0:
+            found = 3
+        
+        print(f'{battery.number:>4}{format(battery.cost, ","):>33} €{format(wasted_energy, ","):>39} Wh')
+
+        if found > 0:
             pv = pv.stack().reset_index(drop=True)
             gridload = gridload.stack().reset_index(drop=True)
-            return pv, gridload, gridload_flattened, battery
-            
-            
-            
+            return pv, gridload, wasted_energy, gridload_aided, gridload_flattened, gridload_median, battery, found
