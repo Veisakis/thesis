@@ -1,15 +1,18 @@
+import os
 import requests
 import pandas as pd
 
+path = os.environ['HOME']
+
 try:
-    gridload_raw = pd.read_csv(path + "/data/moires_gridload.csv", sep=":")
+    gridload_raw = pd.read_csv(path + "/thesis/data/moires_gridload.csv", sep=":")
 except FileNotFoundError:
     print("File not found!\nExiting...")
     sys.exit()
 else:
     print("\nLoaded gridload data for the area.")
 
-print("Fetching PV data from PV-GIS...\n")
+print("\nFetching PV data from PV-GIS...")
 url = ("https://re.jrc.ec.europa.eu/api/seriescalc?lat="
        + lat+"&lon="+lon+"&startyear="+startyear+"&endyear="
        + endyear+"&peakpower="+str(solar)+"&angle="+angle
@@ -22,12 +25,12 @@ except ConnectionError:
     print(f'Status code: {r.status_code}')
     sys.exit()
 else:
-    print("\nConnection Established!\n")
-    os.system("curl \'"+url+"\' | tail -n+11 | head -n-11 >"+path+"/data/pv_production.csv")
+    print("Connection Established!\n")
+    os.system("curl \'"+url+"\' | tail -n+11 | head -n-11 >"+path+"/thesis/data/pv_production.csv")
     print("\nSaved data to file pv_production.csv\n")
 
 try:
-    pv_raw = pd.read_csv(path + "/data/pv_production.csv")
+    pv_raw = pd.read_csv(path + "/thesis/data/pv_production.csv")
 except FileNotFoundError as err:
     sys.exit(err)
 

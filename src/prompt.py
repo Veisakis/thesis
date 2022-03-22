@@ -12,14 +12,16 @@ from requests.exceptions import ConnectionError
 import processData
 from battery import Battery
 
+min = 1
+max = 100
+timespan = range(500, 800)
 
 loss = "14"
 angle = "30"
 endyear = "2014"
 startyear = "2014"
-timespan = range(8760)
 
-path = "/home/manousos/myfiles/thesis"
+path = os.environ['HOME']
 
 places = {
     1: (35.512, 24.012),
@@ -48,9 +50,9 @@ while type > 2 or type < 1:
                      + "[2] Lithium-Ion\n"))
 
 if type == 1:
-    bat_type = path + "/data/lead_carbon.json"
+    bat_type = path + "/thesis/data/lead_carbon.json"
 else:
-    bat_type = path + "/data/lithium_ion.json"
+    bat_type = path + "/thesis/data/lithium_ion.json"
 
 cost = int(input("\nSet cost limit (if none, enter 0): "))
 while cost < 0:

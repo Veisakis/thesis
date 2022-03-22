@@ -21,7 +21,7 @@ angle = "30"
 endyear = "2014"
 startyear = "2014"
 
-path = "/home/manousos/myfiles/thesis"
+path = os.environ['HOME']
 
 places = {
     1: (35.512, 24.012),
@@ -50,9 +50,9 @@ while type > 2 or type < 1:
                      + "[2] Lithium-Ion\n"))
 
 if type == 1:
-    bat_type = path + "/data/lead_carbon.json"
+    bat_type = path + "/thesis/data/lead_carbon.json"
 else:
-    bat_type = path + "/data/lithium_ion.json"
+    bat_type = path + "/thesis/data/lithium_ion.json"
 
 cost = int(input("\nSet cost limit (if none, enter 0): "))
 while cost < 0:
@@ -78,7 +78,7 @@ while solar <= 0:
 
 
 try:
-    gridload_raw = pd.read_csv(path + "/data/moires_gridload.csv", sep=":")
+    gridload_raw = pd.read_csv(path + "/thesis/data/moires_gridload.csv", sep=":")
 except FileNotFoundError:
     print("File not found!\nExiting...")
     sys.exit()
@@ -99,11 +99,11 @@ except ConnectionError:
     sys.exit()
 else:
     print("Connection Established!\n")
-    os.system("curl \'"+url+"\' | tail -n+11 | head -n-11 >"+path+"/data/pv_production.csv")
+    os.system("curl \'"+url+"\' | tail -n+11 | head -n-11 >"+path+"/thesis/data/pv_production.csv")
     print("\nSaved data to file pv_production.csv\n")
 
 try:
-    pv_raw = pd.read_csv(path + "/data/pv_production.csv")
+    pv_raw = pd.read_csv(path + "/thesis/data/pv_production.csv")
 except FileNotFoundError as err:
     sys.exit(err)
 
