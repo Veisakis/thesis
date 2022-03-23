@@ -1,0 +1,87 @@
+\documentclass[12pt]{report}
+\usepackage[a4paper, total={16cm, 24cm}]{geometry}
+\usepackage[greek]{babel}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[acronym]{glossaries}
+
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95, 0.95, 0.92}
+
+\lstdefinestyle{style}{
+    backgroundcolor=\color{backcolour},   
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    keepspaces=true,                 
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=style}
+
+\begin{document}
+Παρακάτω θα αναλυθούν οι συναρτήσεις που αποτελούν τον κορμό των λειτουργιών του προγράμματος και που βρίσκονται
+στο αρχείο {\latintext{processData.py}}. Η επεξήγηση του κυρίως προγράμματος {\latintext{main.py}} θα γίνει μέσω αυτής της διαδικασίας.
+
+Η πρώτη συνάρτηση ονομάζεται {\latintext{formatData}} και σκοπός της είναι να μετατρέψει τα δεδομένα
+σε μορφή που θα επιτρέψει και θα διευκολύνει την επεξεργασία τους.
+
+Τα δύο κύρια αρχεία δεδομένων που χρησιμοποιεί το πρόγραμμα είναι η χρονοσειρά του φορτίου του δικτύου και η 
+χρονοσειρά της παραγώμενης ισχύος των ΦΒ, για την συγκεκριμένη περιοχή. 
+
+Τα δεδομένα για το φορτίο του δικτύου λαμβάνονται έτοιμα για την περιοχή που θα επιλεχθεί, από το αρχείο στο οποίο
+είναι αποθηκευμένα με όνομα {{\latintext{data/}}\textit{<περιοχή>}{\latintext{\_gridload.csv}}. 
+Ο χρήστης στην αρχή του προγράμματος ζητείται να διαλέξει μία από τις περιοχές που αναγράφονται και ανάλογα με την
+επιλογή του (1-5), επιλέγεται το κατάλληλο αρχείο από τον παραπάνω φάκελο.
+
+{\latintext{
+\begin{lstlisting}[language=Python] 
+print("\nSelect examination area from the list below (1-5)")
+place = int(input("[1] Chania\n[2] Rethymno\n"
+                  + "[3] Heraklio\n[4] Ag.Nikolaos\n[5] Moires\n"))
+
+while place > 5 or place < 1:
+    print("\nInvalid answer. Please choose one of the below:")
+    place = int(input("[1] Chania\n[2] Rethymno\n"
+                      + "[3] Heraklio\n[4] Ag.Nikolaos\n[5] Moires\n"))
+
+\end{lstlisting}
+}}
+
+Όσον αφορά τα δεδομένα για την παραγώμενη ισχύς από τα ΦΒ, αυτά κατεβαίνουν από την ιστοσελίδα του 
+{\latintext{PV-GIS}} μέσω του {\latintext{API}} του. Το αίτημα για τα δεδομένα γίνεται 
+μέσω της εντολής {\latintext{curl}} και τα αυτά αποθηκεύονται με τη σειρά τους στο αρχείο 
+{\latintext{data/pv\_production.csv}}.
+Για να γίνει το αίτημα αυτό στην ιστοσελίδα, θα πρέπει να δωθούν κάποιες παράμετροι, μέσα στις οποίες είναι και οι 
+συντεταγμένες της περιοχής. Συνεπώς ανάλογα με την επιλογή του χρήστη, οι συντεταγμένες αποθηκεύονται σε δύο 
+μεταβλητές, {\latintext{lat}} και {\latintext{lon}}. Αυτές αντλούνται από ένα {\latintext{dictionary}}, το οποίο
+ορίζεται στην αρχή του προγράμματος για να είναι εφικτή η εύκολη τροποποίησή του ανάλογα με τις ανάγκες του χρήστη.
+Για τον ίδιο λόγο ορίζονται στην αρχή του προγράμματος και οι υπόλοιπες μεταβλητές που χρειάζεται η ιστοσελίδα, 
+αλλά και όλο το πρόγραμμα.
+
+{\latintext{
+\begin{lstlisting}[language=Python] 
+places = {
+    1: (35.512, 24.012),
+    2: (35.364, 24.471),
+    3: (35.343, 25.153),
+    4: (35.185, 25.706),
+    5: (35.050, 24.877)
+}
+\end{lstlisting}
+}}
+
+{\latintext{
+\begin{lstlisting}[language=Python] 
+lat = str(places[place][0])
+lon = str(places[place][1])
+\end{lstlisting}
+}}
+
+Η συνάρτηση {\latintext{formatData}} δέχεται ως ορίσματα τις δύο χρονοσειρές και τις μετατρέπει σε έναν πίνακα που η κάθε του σειρά
+είναι μία μέρα του χρόνου και κάθε στήλη του είναι η αντίστοιχη ώρα της ημέρας, κατά την οποία πάρθηκε η μέτρηση. 
+Στο τέλος, η συνάρτηση επιστρέφει δύο πίνακες οι οποίοι έχουν 365 γραμμές και 24 στήλες.
+\end{document}
+

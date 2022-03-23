@@ -63,7 +63,7 @@ print("\nSelect examination area from the list below (1-5)")
 place = int(input("[1] Chania\n[2] Rethymno\n"
                   + "[3] Heraklio\n[4] Ag.Nikolaos\n[5] Moires\n"))
 
-while place > 6 or place < 1:
+while place > 5 or place < 1:
     print("\nInvalid answer. Please choose one of the below:")
     place = int(input("[1] Chania\n[2] Rethymno\n"
                       + "[3] Heraklio\n[4] Ag.Nikolaos\n[5] Moires\n"))
