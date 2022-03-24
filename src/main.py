@@ -9,7 +9,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from requests.exceptions import ConnectionError
 
-import processData
+import processData, economics
 from battery import Battery
 
 min = 1
@@ -20,6 +20,10 @@ loss = "14"
 angle = "30"
 endyear = "2014"
 startyear = "2014"
+
+pv_cost_perkW = 1_000
+discount_rate = 0.06
+project_lifetime = 25
 
 path = os.environ['HOME']
 
@@ -116,11 +120,17 @@ except Exception as err:
 '''Optimization'''
 pv, gridload, gridload_mean = processData.formatData(pv_raw, gridload_raw)
 pv, gridload, wasted_energy, gridload_aided, gridload_flattened, gridload_mean, bat, found = processData.batteryOptimization(pv, gridload, gridload_mean,
-                                                                                                                             min, max, bat, cost)
+                                                                                                                             min, max, bat_type, cost)
+solar_cost = format(round(solar*pv_cost_perkW, 2), ",")
+bat_cost = format(round(bat.cost, 2), ",")
+total_cost = format(round(bat.cost+solar*pv_cost_perkW, 2), ",")
 
 print(f'\n{"Optimization Results":-^65}')
-print(f'Batteries: {bat.number}')
-print(f'Total Cost: {format(bat.cost, ",")}€')
+print(f'PV: {solar} kWp')
+print(f'Batteries: {bat.number}\n')
+print(f'PV Installation Cost: {solar_cost} €')
+print(f'Batteries Cost: {bat_cost} €')
+print(f'Total Cost: {total_cost} €')
 print(f'{"Notes":-^65}')
 
 if found == 1:

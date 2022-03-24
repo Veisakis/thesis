@@ -1,3 +1,6 @@
+'''Data manipulation functions'''
+
+import sys
 import numpy as np
 import pandas as pd
 
@@ -30,8 +33,7 @@ def wastedEnergy(pv, gridload, battery):
     excess_energy = balance[balance > 0]
 
     for energy in excess_energy:
-        if battery.canCharge(energy) == 1:
-            battery.charge(energy)
+        battery.charge(energy)
     return excess_energy.sum()
 
 
@@ -57,10 +59,10 @@ def flattenCurve(gridload, gridload_mean, battery):
 
     for index in sortedIndeces:
         energy = deviation[index]
-        if energy > 0 and battery.canDischarge(energy) == 1:
-            deviation[index] = 0
+        if energy > 0:
+            energy = battery.discharge(energy)
+            deviation[index] -= energy
             gridload_sample[index] -= energy
-            battery.discharge(energy)
     return gridload_sample
 
 
@@ -71,7 +73,7 @@ def isReached(wasted_energy, gridload_aided, gridload_flattened):
     return excess_energy_produced - energy_supplied
 
 
-def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, battery, cost_limit):
+def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, bat_type, cost_limit):
     '''Find optimized result by applying all of the above functions to each battery-pack size'''
     found = 0
     gridload_median = gridload_mean #Instead of using global
@@ -83,7 +85,8 @@ def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, bat
         wasted_energy = []
         gridload_aided = []
         gridload_flattened = []
-
+        
+        battery = Battery.from_json(bat_type)
         battery.batteryPack(batteries)
 
         for day in year:
@@ -112,7 +115,7 @@ def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, bat
             gridload_median = gridload_flattened.mean()
             
         if cost_limit != 0:
-            if battery.unit_cost * (batteries+1) >= cost_limit:
+            if battery.cost >= cost_limit:
                 found = 1
 
         if wasted_energy <= 0:
@@ -128,3 +131,5 @@ def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, bat
             pv = pv.stack().reset_index(drop=True)
             gridload = gridload.stack().reset_index(drop=True)
             return pv, gridload, wasted_energy, gridload_aided, gridload_flattened, gridload_median, battery, found
+    
+    sys.exit("Search Limit reached...\nTry using another search range.")
