@@ -5,20 +5,22 @@ import math
 
 
 class Battery:
-    def __init__(self, type, voltage, capacity_kwh, efficiency,
-                 cycles, dod, cost_per_wh, isbattery_pack=0, number=1):
+    def __init__(self, type, voltage, capacity_wh, efficiency,
+                 cycles, dod, cost_per_wh, lifespan, isbattery_pack=0, number=1):
         self.type = type
         self.voltage = voltage
         self.efficiency = efficiency
         self.cycles = cycles
         self.dod = dod
 
-        self.nominal_capacity = capacity_kwh * 1000
+        self.nominal_capacity = capacity_wh
         self.max_capacity = self.nominal_capacity * self.dod
         self.min_capacity = self.nominal_capacity * (1-self.dod)
         self.capacity = self.min_capacity
 
         self.cost = self.nominal_capacity * cost_per_wh
+        self.lifespan = lifespan
+
         self.isbattery_pack = isbattery_pack
         self.number = number
 
@@ -36,10 +38,10 @@ class Battery:
         assert inSeries > 0, "Cannot be less than 1 battery in series!"
 
         self.voltage = self.voltage * inSeries
-        
+
         self.nominal_capacity = self.nominal_capacity * number
         self.capacity = self.min_capacity * number
-        
+
         self.number = number
         self.isbattery_pack = 1
         self.cost = self.cost * number
@@ -56,12 +58,13 @@ class Battery:
     def discharge(self, energy):
         potential_soc = (self.nominal_capacity - self.capacity - energy) / self.nominal_capacity
         if potential_soc < self.dod:
+            energy = self.capacity - self.min_capacity
             self.capacity = self.min_capacity
-            return 0
+            return energy
         else:
             self.capacity -= energy
             return energy
-        
+
     def stateOfCharge(self):
         return self.capacity / self.nominal_capacity
 
@@ -70,5 +73,6 @@ class Battery:
         with open(json_path, 'r') as f:
             data = json.load(f)
 
-        return cls(data['type'], data['voltage'], data['capacity_kwh'],
-                   data['efficiency'], data['cycles'], data['dod'], data['cost_per_wh'])
+        return cls(data['type'], data['voltage'], data['capacity_wh'],
+                   data['efficiency'], data['cycles'], data['dod'],
+                   data['cost_per_wh'], data['lifespan'])

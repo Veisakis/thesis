@@ -1,9 +1,10 @@
 {
   "type" : "Lead-Carbon",
   "voltage" : 600,
-  "capacity_kwh" : 300,
+  "capacity_wh" : 300000,
   "efficiency" : 0.985,
   "cycles" : 5000,
   "dod" : 0.4,
-  "cost_per_wh": 0.3
+  "cost_per_wh" : 0.3,
+  "lifespan" : 14
 }

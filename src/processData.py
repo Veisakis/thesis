@@ -4,11 +4,16 @@ import sys
 import numpy as np
 import pandas as pd
 
+import economics, config
 from battery import Battery
 
 year = range(365)
 
 
+def energyPrettify(energy):
+    return format(round(energy, 2), ",") + " Wh"
+    
+    
 def formatData(pv_raw, gridload_raw):
     '''Convert raw data to the appropriate form'''
     gridload = gridload_raw.drop(
@@ -73,19 +78,20 @@ def isReached(wasted_energy, gridload_aided, gridload_flattened):
     return excess_energy_produced - energy_supplied
 
 
-def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, bat_type, cost_limit):
+def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, bat_type, solar_cost, cost_limit):
     '''Find optimized result by applying all of the above functions to each battery-pack size'''
     found = 0
-    gridload_median = gridload_mean #Instead of using global
+    gridload_median = gridload_mean  # Instead of using global
     batteries_sample = list(range(sample_min, sample_max))
-
-    print(f'\nBatteries{"System Cost":>30}{"Energy Wasted":>40}\n')
-
+    
+    pv_stack = pv.stack().reset_index(drop=True)
+    gridload_stack = gridload.stack().reset_index(drop=True)
+    
     for batteries in batteries_sample:
         wasted_energy = []
         gridload_aided = []
         gridload_flattened = []
-        
+
         battery = Battery.from_json(bat_type)
         battery.batteryPack(batteries)
 
@@ -100,7 +106,7 @@ def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, bat
             wasted_energy.append(waste_energy)
             gridload_aided.append(gridload_aid)
             gridload_flattened.append(gridload_flat)
-        
+
         gridload_aided = pd.DataFrame(gridload_aided)
         gridload_aided = gridload_aided.stack().reset_index(drop=True)
         gridload_flattened = pd.DataFrame(gridload_flattened)
@@ -110,26 +116,37 @@ def batteryOptimization(pv, gridload, gridload_mean, sample_min, sample_max, bat
         gridload_median = int(gridload_median)
         
         wasted_energy = isReached(wasted_energy, gridload_aided, gridload_flattened)
-                
+        npv, onm, reinvest, costs = economics.NPV(solar_cost, pv_stack.sum(), battery)
+        
+        if batteries == sample_min:
+            if cost_limit != 0 and costs >= cost_limit:
+                sys.exit("Cost limit is too low to find an optimized result for that data.")
+            print(f'\nBatteries{"System Cost":>30}{"Energy Wasted":>40}\n')
+        
         if gridload_flattened_max <= gridload_median:
             gridload_median = gridload_flattened.mean()
-            
-        if cost_limit != 0:
-            if battery.cost >= cost_limit:
+
+        if cost_limit != 0:    
+            battery = Battery.from_json(bat_type)
+            battery.batteryPack(batteries+1)
+            pot_costs = economics.NPV(solar_cost, pv_stack.sum(), battery)[3]            
+            if pot_costs >= cost_limit:
                 found = 1
 
         if wasted_energy <= 0:
             wasted_energy = 0
             found = 2
-        
-        if gridload_flattened_max == 0:
+
+        if gridload_flattened_max <= 0:
             found = 3
-        
-        print(f'{battery.number:>4}{format(battery.cost, ","):>33} €{format(wasted_energy, ","):>39} Wh')
+
+        print(f'{battery.number:>4}{economics.euro(costs):>36}{energyPrettify(wasted_energy):>42}')
 
         if found > 0:
-            pv = pv.stack().reset_index(drop=True)
-            gridload = gridload.stack().reset_index(drop=True)
-            return pv, gridload, wasted_energy, gridload_aided, gridload_flattened, gridload_median, battery, found
-    
-    sys.exit("Search Limit reached...\nTry using another search range.")
+            pv = pv_stack
+            gridload = gridload_stack
+            return pv, gridload, wasted_energy, gridload_aided, gridload_flattened, gridload_median, battery, found, npv, onm, reinvest, costs
+
+    sys.exit("Search Limit reached...\n"
+            + "No optimized result was found.\n"
+            + "Try using another battery search range from config.py.")
