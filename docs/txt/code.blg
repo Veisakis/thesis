@@ -1,5 +1,0 @@
-[0] Config.pm:304> INFO - This is Biber 2.14
-[0] Config.pm:307> INFO - Logfile is 'code.blg'
-[65] biber:322> INFO - === Wed Mar 23, 2022, 21:52:40
-[146] Utils.pm:320> ERROR - Cannot find 'code.bcf'!
-[146] Biber.pm:132> INFO - ERRORS: 1
