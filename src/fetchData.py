@@ -8,7 +8,10 @@ import config
 
 
 def csv(name):
-    '''Get gridload data for a specific location, from csv files saved in data folder'''
+    '''
+    Get gridload data for a specific location, 
+    from the corresponding csv file saved in "data" folder
+    '''
     filename = config.path + "/thesis/data/" + name + "_gridload.csv"
     try:
         gridload_raw = pd.read_csv(filename, sep=":")
@@ -22,8 +25,8 @@ def csv(name):
         
 def pvgis(lat, lon, solar):
     '''
-    Get solar hourly production data for a year from pv-gis API, 
-    for a specific location and specific solar system size
+    Get hourly solar production data for a year, from pv-gis API
+    Data downloaded for a specific location and a specific solar system size
     ''' 
     print("\nFetching PV data from PV-GIS...")
     url = ("https://re.jrc.ec.europa.eu/api/seriescalc?lat="
@@ -66,45 +69,3 @@ def formatData(pv_raw, gridload_raw):
         df_newcol = df_newcol.reset_index().drop(columns="index")
         pv[i] = df_newcol
     return pv, gridload, gridload_mean
-
-
-def datagovgr():
-    '''Fetch data for all of Greece, from data.gov.gr API'''
-    url = 'https://data.gov.gr/api/v1/query/admie_realtimescadares?date_from=2021-01-01&date_to=2021-12-31'
-    headers = {'Authorization': 'Token cae197251734baf5d81483596ac52d81cb41b779'}
-
-    r = requests.get(url, headers=headers)
-
-    df_raw = pd.DataFrame(r.json())
-    df_raw = df_raw.drop('date', axis=1)
-
-    df = df_raw.iloc[::24]
-    df = df.rename(columns={'energy_mwh': 0}).reset_index().drop(columns="index").drop(364)
-
-    for i in range(1, 24):
-        filter = df_raw.iloc[i::24]
-        df_newcol = pd.DataFrame(filter)
-        df_newcol = df_newcol.reset_index().drop(columns="index")
-        df[i] = df_newcol['energy_mwh']
-    res = df
-
-    url = 'https://data.gov.gr/api/v1/query/admie_realtimescadasystemload?date_from=2021-01-01&date_to=2021-12-31'
-    headers = {'Authorization': 'Token cae197251734baf5d81483596ac52d81cb41b779'}
-
-    r = requests.get(url, headers=headers)
-
-    df_raw = pd.DataFrame(r.json())
-    df_raw = df_raw.drop('date', axis=1)
-
-    df = df_raw.iloc[::24]
-    df = df.rename(columns={'energy_mwh': 0}).reset_index().drop(columns="index").drop(364)
-
-    for i in range(1, 24):
-        filter = df_raw.iloc[i::24]
-        df_newcol = pd.DataFrame(filter)
-        df_newcol = df_newcol.reset_index().drop(columns="index")
-        df[i] = df_newcol['energy_mwh']
-    gridload = df
-    gridload_mean = np.array(df_raw).mean()
-
-    return res, gridload, gridload_mean

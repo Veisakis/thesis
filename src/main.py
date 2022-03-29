@@ -9,10 +9,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from requests.exceptions import ConnectionError
 
-import fetchData
-import processData
-import economics
-import config
+import fetchData, processData, economics, config
 from battery import Battery
 
 
@@ -54,7 +51,7 @@ else:
 try:
     bat = Battery.from_json(bat_type)
 except Exception as err:
-    print("\nFailed to instantiate battery object from json file...\n")
+    print("Failed to instantiate battery object from json file...\n")
     sys.exit(err)
 
 solar = int(input("\nHow much solar is wanted to be placed in the area (kWp)? "))
@@ -69,11 +66,11 @@ while cost < 0:
 solar_cost = solar * config.pv_cost_perkWp
 res_cost = solar_cost
 
+'''Optimization'''
 pv_raw = fetchData.pvgis(lat, lon, solar)
 gridload_raw = fetchData.csv(config.place_name[place])
 res, gridload, gridload_mean = fetchData.formatData(pv_raw, gridload_raw)
 
-'''Optimization'''
 (res, gridload,
  wasted_energy, gridload_aided,
  gridload_flattened, gridload_mean,

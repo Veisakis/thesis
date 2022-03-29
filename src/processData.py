@@ -60,7 +60,7 @@ def isReached(wasted_energy, gridload_aided, gridload_flattened):
     return excess_energy_produced - energy_supplied
 
 
-def batteryOptimization(res, gridload, gridload_mean, sample_min, sample_max, bat_type, res_cost, cost_limit):
+def batteryOptimization(res, gridload, gridload_mean, sample_min, sample_max, bat_type, res_cost=0, cost_limit=0):
     '''Find optimized result by applying all of the above functions to each battery-pack size'''
     found = 0
     gridload_median = gridload_mean  # Instead of using global
@@ -76,7 +76,7 @@ def batteryOptimization(res, gridload, gridload_mean, sample_min, sample_max, ba
 
         battery = Battery.from_json(bat_type)
         battery.batteryPack(batteries)
-
+    
         for day in year:
             res_day = res.iloc[day]
             gridload_day = gridload.iloc[day]

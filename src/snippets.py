@@ -286,3 +286,46 @@ def simResults(gridload, gridload_mean, battery):
 ax2.axhline(y=gridload_mean, color="red",
             linestyle='--', alpha=0.50,
             label='Gridload Mean Value')
+            
+            
+#data gov
+def datagovgr():
+    '''Fetch data for all of Greece, from data.gov.gr API'''
+    url = 'https://data.gov.gr/api/v1/query/admie_realtimescadares?date_from=2021-01-01&date_to=2021-12-31'
+    headers = {'Authorization': 'Token cae197251734baf5d81483596ac52d81cb41b779'}
+
+    r = requests.get(url, headers=headers)
+
+    df_raw = pd.DataFrame(r.json())
+    df_raw = df_raw.drop('date', axis=1)
+
+    df = df_raw.iloc[::24]
+    df = df.rename(columns={'energy_mwh': 0}).reset_index().drop(columns="index").drop(364)
+
+    for i in range(1, 24):
+        filter = df_raw.iloc[i::24]
+        df_newcol = pd.DataFrame(filter)
+        df_newcol = df_newcol.reset_index().drop(columns="index")
+        df[i] = df_newcol['energy_mwh']
+    res = df
+
+    url = 'https://data.gov.gr/api/v1/query/admie_realtimescadasystemload?date_from=2021-01-01&date_to=2021-12-31'
+    headers = {'Authorization': 'Token cae197251734baf5d81483596ac52d81cb41b779'}
+
+    r = requests.get(url, headers=headers)
+
+    df_raw = pd.DataFrame(r.json())
+    df_raw = df_raw.drop('date', axis=1)
+
+    df = df_raw.iloc[::24]
+    df = df.rename(columns={'energy_mwh': 0}).reset_index().drop(columns="index").drop(364)
+
+    for i in range(1, 24):
+        filter = df_raw.iloc[i::24]
+        df_newcol = pd.DataFrame(filter)
+        df_newcol = df_newcol.reset_index().drop(columns="index")
+        df[i] = df_newcol['energy_mwh']
+    gridload = df
+    gridload_mean = np.array(df_raw).mean()
+
+    return res, gridload, gridload_mean
