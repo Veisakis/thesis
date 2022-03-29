@@ -15,6 +15,7 @@ from battery import Battery
 
 os.system("clear")
 os.system("figlet TEI Crete")
+print("by Veisakis Manousos, April 2022\n")
 print("'How many batteries need to be installed, to handle more renewables on the grid?'\n"
       + "An optimization script to solve this problem.\n"
       + "\nOptimization ends when either:\n"
@@ -91,6 +92,7 @@ print(f'PV: {solar:,} kWp')
 print(f'PV Initial Cost: {solar_cost}\n')
 print(f'Batteries: {bat.number}')
 print(f'Batteries Initial Cost: {bat_cost}\n')
+print(f'System lifetime: {config.project_lifetime} years')
 print(f'Operational and Maintenance Costs: {onm}')
 print(f'Reinvesting Costs during lifetime: {reinvest}\n')
 print(f'Total Cost in Present Value: {total_cost}')
@@ -103,8 +105,7 @@ elif found == 2:
           + "No need for more than {number} batteries.".format(number=bat.number))
 elif found == 3:
     print("Renewables supply the grid at 100%!")
-
-print(f'System lifetime is considered {config.project_lifetime} years.')
+    
 print(f'{"!":-^65}\n')
 
 print("Main modifiable parameters stored in config.py:\n"
