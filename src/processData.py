@@ -11,6 +11,7 @@ year = range(365)
 
 
 def energyPrettify(energy):
+    '''Nice format for printing energy values'''
     return format(round(energy, 2), ",") + " Wh"
 
 

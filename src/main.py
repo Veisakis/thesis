@@ -15,7 +15,6 @@ from battery import Battery
 
 os.system("clear")
 os.system("figlet TEI Crete")
-print("by Veisakis Manousos, April 2022\n")
 print("'How many batteries need to be installed, to handle more renewables on the grid?'\n"
       + "An optimization script to solve this problem.\n"
       + "\nOptimization ends when either:\n"
@@ -23,7 +22,7 @@ print("'How many batteries need to be installed, to handle more renewables on th
       + "(2) Renewables and batteries can supply 100% of gridload.\n"
       + "(3) Cost limit is reached (if set).\n")
 
-print("\nSelect examination area from the list below (1-5)")
+print("Select examination area from the list below (1-5)")
 place = int(input("[1] Chania\n[2] Rethymno\n[3] Heraklio\n"
                   + "[4] Ag.Nikolaos\n[5] Moires\n"))
 
@@ -35,7 +34,7 @@ while place > 5 or place < 1:
 lat = str(config.place_coordinates[place][0])
 lon = str(config.place_coordinates[place][1])
 
-print("\nChoose a battery type to store the energy produced by renewables:")
+print("\nChoose battery type:")
 type = int(input("[1] Lead-Carbon (300,000.00€/MWh@5000cycles)\n"
                  + "[2] Lithium-Ion (500,000.00€/MWh@6000cycles)\n"))
 
@@ -60,10 +59,10 @@ while solar <= 0:
     print("Installed kWp cannot be below zero...")
     solar = int(input("Please provide valid input: "))
 
-cost = int(input("Set system's cost limit (€). Ιf there is no budget limit, type 0: "))
+cost = int(input('Set cost limit (€). Ιf none, type 0: '))
 while cost < 0:
     print("\nInvalid answer!")
-    cost = int(input("Set system's cost limit (€)"))
+    cost = int(input('Set cost limit (€)'))
 solar_cost = solar * config.pv_cost_perkWp
 res_cost = solar_cost
 
@@ -92,17 +91,16 @@ print(f'PV: {solar:,} kWp')
 print(f'PV Initial Cost: {solar_cost}\n')
 print(f'Batteries: {bat.number}')
 print(f'Batteries Initial Cost: {bat_cost}\n')
-print(f'System lifetime: {config.project_lifetime} years')
 print(f'Operational and Maintenance Costs: {onm}')
 print(f'Reinvesting Costs during lifetime: {reinvest}\n')
 print(f'Total Cost in Present Value: {total_cost}')
 print(f'{"Notes":-^65}')
 
+print(f'System lifetime is considered {config.project_lifetime} years.')
 if found == 1:
     print("Cost limit has been reached!")
 elif found == 2:
-    print("No excess energy, produced by renewables, is wasted.\n"
-          + "No need for more than {number} batteries.".format(number=bat.number))
+    print("No excess energy, produced by renewables, is wasted.")
 elif found == 3:
     print("Renewables supply the grid at 100%!")
     
@@ -123,6 +121,7 @@ print("Main modifiable parameters stored in config.py:\n"
 plt.style.use('classic')
 fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
 
+
 ax1.plot(config.timespan, res[config.timespan], linestyle='dashed',
          color='darkolivegreen', label='PV power output')
 ax1.plot(config.timespan, gridload[config.timespan],
@@ -132,14 +131,16 @@ ax1.fill_between(config.timespan, res[config.timespan], gridload[config.timespan
                  where=(res[config.timespan] > gridload[config.timespan]), interpolate=True,
                  color='yellowgreen', alpha=0.40, label='Excess Energy')
 
-ax1.set_xticks(config.timespan)
+ax1.set_xticks(config.timespan, minor=True)
+ax1.set_xticks(np.arange(config.timespan[0], config.timespan[-1], 24))
 ax1.set_xlim(config.timespan[0], config.timespan[-1])
 
-ax1.set_ylabel('Power (W)')
-ax1.set_title('Grid load and PV power output curves')
+ax1.set_ylabel('Power (W)', fontsize='medium')
+ax1.set_title('Grid load and PV power output curves', fontsize='x-large')
 
-ax1.grid(True)
-ax1.legend(loc='upper left')
+ax1.grid(which='minor', alpha=0.5)
+ax1.grid(which='major', alpha=1.0)
+ax1.legend(loc='upper left', fontsize='x-small')
 
 
 ax2.plot(config.timespan, gridload_aided[config.timespan],
@@ -150,15 +151,17 @@ ax2.plot(config.timespan, gridload_flattened[config.timespan],
 ax2.fill_between(config.timespan, gridload_aided[config.timespan], color='saddlebrown', alpha=0.50)
 ax2.fill_between(config.timespan, gridload_flattened[config.timespan], color='olive', alpha=0.30)
 
-ax2.set_xticks(config.timespan)
+ax2.set_xticks(config.timespan, minor=True)
+ax2.set_xticks(np.arange(config.timespan[0], config.timespan[-1], 24))
 ax2.set_xlim(config.timespan[0], config.timespan[-1])
 
-ax2.set_xlabel('Hour of the day (h)')
-ax2.set_ylabel('Power (W)')
-ax2.set_title('Grid load "with" and "without" Batteries')
+ax2.set_xlabel('Hour of the year (h)', fontsize='medium')
+ax2.set_ylabel('Power (W)', fontsize='medium')
+ax2.set_title('Grid load "with" and "without" Batteries', fontsize='x-large')
 
-ax2.grid(True)
-ax2.legend(loc='upper left')
+ax2.grid(which='minor', alpha=0.5)
+ax2.grid(which='major', alpha=1.0)
+ax2.legend(loc='upper left', fontsize='x-small')
 
 plt.tight_layout()
 plt.show()

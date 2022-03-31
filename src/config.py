@@ -2,7 +2,7 @@ import os
 
 min = 1
 max = 500
-timespan = range(500, 800)
+timespan = range(24*220, 24*240)
 
 discount_rate = 0.06
 project_lifetime = 25

@@ -8,10 +8,7 @@ import config
 
 
 def csv(name):
-    '''
-    Get gridload data for a specific location, 
-    from the corresponding csv file saved in "data" folder
-    '''
+    '''Get location's gridload data from the corresponding csv file'''
     filename = config.path + "/thesis/data/" + name + "_gridload.csv"
     try:
         gridload_raw = pd.read_csv(filename, sep=":")
@@ -24,10 +21,7 @@ def csv(name):
         
         
 def pvgis(lat, lon, solar):
-    '''
-    Get hourly solar production data for a year, from pv-gis API
-    Data downloaded for a specific location and a specific solar system size
-    ''' 
+    '''Get hourly solar production data for a year from pv-gis's API'''
     print("\nFetching PV data from PV-GIS...")
     url = ("https://re.jrc.ec.europa.eu/api/seriescalc?lat="
            + lat+"&lon="+lon+"&startyear="+config.startyear+"&endyear="
