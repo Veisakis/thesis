@@ -1,7 +1,7 @@
 import os
 
-search_start = 1
-search_end = 500
+batSearch_start = 1
+batSearch_end = 500
 
 plotDay_start = 220
 plotDay_end = 240
