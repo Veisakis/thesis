@@ -1,8 +1,11 @@
 import os
 
-min = 1
-max = 500
-timespan = range(24*220, 24*240)
+search_start = 1
+search_end = 500
+
+plotDay_start = 220
+plotDay_end = 240
+timespan = range(24*plotDay_start, 24*plotDay_end)
 
 discount_rate = 0.06
 project_lifetime = 25
