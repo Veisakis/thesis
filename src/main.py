@@ -75,7 +75,7 @@ res, gridload, gridload_mean = fetchData.formatData(pv_raw, gridload_raw)
  wasted_energy, gridload_aided,
  gridload_flattened, gridload_mean,
  bat, found, npv, onm, reinvest, costs) = processData.batteryOptimization(res, gridload, gridload_mean,
-                                                                          config.search_start, config.search_end, 
+                                                                          config.batSearch_start, config.batSearch_end, 
                                                                           bat_type, res_cost, cost)
 
 npv = economics.euro(npv)
