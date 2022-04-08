@@ -24,12 +24,12 @@ print("'How many batteries need to be installed, to handle more renewables on th
 
 print("Select examination area from the list below (1-5)")
 place = int(input("[1] Chania\n[2] Rethymno\n[3] Heraklio\n"
-                  + "[4] Ag.Nikolaos\n[5] Moires\n"))
+                  + "[4] Ag.Nikolaos\n[5] Moires\n[6] Ierapetra\n[7] Sitia\n"))
 
-while place > 5 or place < 1:
+while place > 7 or place < 1:
     print("\nInvalid answer. Please choose one of the below:")
     place = int(input("[1] Chania\n[2] Rethymno\n[3] Heraklio\n"
-                      + "[4] Ag.Nikolaos\n[5] Moires\n"))
+                      + "[4] Ag.Nikolaos\n[5] Moires\n[6] Ierapetra\n[7] Sitia\n"))
 
 lat = str(config.place_coordinates[place][0])
 lon = str(config.place_coordinates[place][1])
@@ -84,9 +84,10 @@ reinvest = economics.euro(reinvest)
 solar_cost = economics.euro(solar_cost)
 bat_cost = economics.euro(bat.cost)
 total_cost = economics.euro(costs)
+lifetime = "System lifetime is considered "+ str(config.project_lifetime) + " years"
 
-
-print(f'\n{"Optimization Results":-^65}')
+print(f'\n{"*Optimization Results*":^65}')
+print(f'{lifetime:-^65}')
 print(f'PV: {solar:,} kWp')
 print(f'PV Initial Cost: {solar_cost}\n')
 print(f'Batteries: {bat.number}')
@@ -96,7 +97,6 @@ print(f'Reinvesting Costs during lifetime: {reinvest}\n')
 print(f'Total Cost in Present Value: {total_cost}')
 print(f'{"Notes":-^65}')
 
-print(f'System lifetime is considered {config.project_lifetime} years.')
 if found == 1:
     print("Cost limit has been reached!")
 elif found == 2:
@@ -116,7 +116,6 @@ print("Main modifiable parameters stored in config.py:\n"
         + "\t(7) Operational and Maintenance Costs (% of initial cost)\n"
         + "Feel free to tailor the source code to your needs!\n")
 '''Optimization'''
-
 '''Plot'''
 plt.style.use('classic')
 fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)

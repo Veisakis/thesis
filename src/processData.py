@@ -1,6 +1,7 @@
 '''Data manipulation functions'''
 
 import sys
+import math
 import numpy as np
 import pandas as pd
 
@@ -48,9 +49,9 @@ def flattenCurve(gridload, gridload_mean, battery):
     for index in sortedIndeces:
         energy = deviation[index]
         if energy > 0:
-            energy = battery.discharge(energy)
-            deviation[index] -= energy
-            gridload_sample[index] -= energy
+            discharge_energy = battery.discharge(energy)
+            deviation[index] -= discharge_energy
+            gridload_sample[index] -= discharge_energy
     return gridload_sample
 
 
@@ -85,7 +86,7 @@ def batteryOptimization(res, gridload, gridload_mean, sample_min, sample_max, ba
             waste_energy = wastedEnergy(res_day, gridload_day, battery)
             gridload_aid = resAid(res_day, gridload_day)
             gridload_flat = flattenCurve(gridload_aid, gridload_median, battery)
-
+            
             wasted_energy.append(waste_energy)
             gridload_aided.append(gridload_aid)
             gridload_flattened.append(gridload_flat)
@@ -95,8 +96,8 @@ def batteryOptimization(res, gridload, gridload_mean, sample_min, sample_max, ba
         gridload_flattened = pd.DataFrame(gridload_flattened)
         gridload_flattened = gridload_flattened.stack().reset_index(drop=True)
 
-        gridload_flattened_max = int(gridload_flattened.max())
-        gridload_median = int(gridload_median)
+        gridload_flattened_max = math.floor(gridload_flattened.max())
+        gridload_median = math.ceil(gridload_median)
         
         wasted_energy = isReached(wasted_energy, gridload_aided, gridload_flattened)
         npv, onm, reinvest, costs = economics.NPV(res_cost, res_stack.sum(), battery)

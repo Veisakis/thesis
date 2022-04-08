@@ -40,7 +40,7 @@ class Battery:
         self.voltage = self.voltage * inSeries
 
         self.nominal_capacity = self.nominal_capacity * number
-        self.capacity = self.min_capacity * number
+        self.capacity = self.min_capacity
 
         self.number = number
         self.isbattery_pack = 1
@@ -49,21 +49,26 @@ class Battery:
     def charge(self, energy):
         potential_soc = (self.nominal_capacity - self.capacity + energy) / self.nominal_capacity
         if potential_soc > 1:
-            self.capacity = self.max_capacity
-            return 0
+            energy = self.nominal_capacity - self.capacity
+            self.capacity = self.nominal_capacity        
         else:
             self.capacity += energy
-            return energy
+        return energy
 
     def discharge(self, energy):
         potential_soc = (self.nominal_capacity - self.capacity - energy) / self.nominal_capacity
         if potential_soc < self.dod:
-            energy = self.capacity - self.min_capacity
+            discharge_energy = self.capacity - self.min_capacity
             self.capacity = self.min_capacity
-            return energy
         else:
-            self.capacity -= energy
-            return energy
+            discharge_energy = energy
+            self.capacity -= discharge_energy
+            
+        if discharge_energy > energy:
+            discharge_energy = energy
+        if discharge_energy < 0:
+            discharge_energy = 0
+        return discharge_energy
 
     def stateOfCharge(self):
         return self.capacity / self.nominal_capacity
