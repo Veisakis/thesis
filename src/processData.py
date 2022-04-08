@@ -1,7 +1,6 @@
 '''Data manipulation functions'''
 
 import sys
-import math
 import numpy as np
 import pandas as pd
 
@@ -96,8 +95,8 @@ def batteryOptimization(res, gridload, gridload_mean, sample_min, sample_max, ba
         gridload_flattened = pd.DataFrame(gridload_flattened)
         gridload_flattened = gridload_flattened.stack().reset_index(drop=True)
 
-        gridload_flattened_max = math.floor(gridload_flattened.max())
-        gridload_median = math.ceil(gridload_median)
+        gridload_flattened_max = int(gridload_flattened.max())
+        gridload_median = int(gridload_median)
         
         wasted_energy = isReached(wasted_energy, gridload_aided, gridload_flattened)
         npv, onm, reinvest, costs = economics.NPV(res_cost, res_stack.sum(), battery)

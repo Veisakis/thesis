@@ -39,7 +39,7 @@ class Battery:
 
         self.voltage = self.voltage * inSeries
 
-        self.nominal_capacity = self.nominal_capacity * number
+        self.nominal_capacity *= number
         self.capacity = self.min_capacity
 
         self.number = number
