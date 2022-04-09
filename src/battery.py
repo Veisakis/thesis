@@ -40,14 +40,14 @@ class Battery:
         self.voltage = self.voltage * inSeries
 
         self.nominal_capacity *= number
-        self.capacity = self.min_capacity
+        self.capacity = self.nominal_capacity
 
         self.number = number
         self.isbattery_pack = 1
         self.cost = self.cost * number
 
     def charge(self, energy):
-        potential_soc = (self.nominal_capacity - self.capacity + energy) / self.nominal_capacity
+        potential_soc = (self.capacity + energy) / self.nominal_capacity
         if potential_soc > 1:
             energy = self.nominal_capacity - self.capacity
             self.capacity = self.nominal_capacity        
