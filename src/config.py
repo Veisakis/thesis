@@ -3,8 +3,8 @@ import os
 batSearch_start = 1
 batSearch_end = 1000
 
-plotDay_start = 180
-plotDay_end = 200
+plotDay_start = 220
+plotDay_end = 240
 timespan = range(24*plotDay_start, 24*plotDay_end)
 
 discount_rate = 0.06

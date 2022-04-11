@@ -40,6 +40,8 @@ class Battery:
         self.voltage = self.voltage * inSeries
 
         self.nominal_capacity *= number
+        self.max_capacity *= number
+        self.min_capacity *= number
         self.capacity = self.nominal_capacity
 
         self.number = number
@@ -56,8 +58,8 @@ class Battery:
         return energy
 
     def discharge(self, energy):
-        potential_soc = (self.nominal_capacity - self.capacity - energy) / self.nominal_capacity
-        if potential_soc < self.dod:
+        potential_soc = (self.capacity - energy) / self.nominal_capacity
+        if potential_soc < 1-self.dod:
             discharge_energy = self.capacity - self.min_capacity
             self.capacity = self.min_capacity
         else:

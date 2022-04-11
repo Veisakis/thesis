@@ -1,7 +1,7 @@
 {
   "type" : "Lead-Carbon",
   "voltage" : 600,
-  "capacity_wh" : 300000,
+  "capacity_wh" : 300000000,
   "efficiency" : 0.985,
   "cycles" : 5000,
   "dod" : 0.4,
