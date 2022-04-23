@@ -84,10 +84,13 @@ reinvest = economics.euro(reinvest)
 solar_cost = economics.euro(solar_cost)
 bat_cost = economics.euro(bat.cost)
 total_cost = economics.euro(costs)
-lifetime = "System lifetime is considered "+ str(config.project_lifetime) + " years"
 
-print(f'\n{"*Optimization Results*":^65}')
-print(f'{lifetime:-^65}')
+lifetime = "System lifetime is considered "+ str(config.project_lifetime) + " years"
+infiltration = format(processData.renewablesInfiltration(gridload, gridload_flattened), ".2%")
+carbon = format(processData.carbonEmissions(gridload, gridload_flattened), ",.0f")
+
+print(f'\n{"*Optimization Results*":^85}')
+print(f'{lifetime:-^85}')
 print(f'PV: {solar:,} kWp')
 print(f'PV Initial Cost: {solar_cost}\n')
 print(f'Batteries: {bat.number}')
@@ -95,7 +98,7 @@ print(f'Batteries Initial Cost: {bat_cost}\n')
 print(f'Operational and Maintenance Costs: {onm}')
 print(f'Reinvesting Costs during lifetime: {reinvest}\n')
 print(f'Total Cost in Present Value: {total_cost}')
-print(f'{"Notes":-^65}')
+print(f'{"Notes":-^85}')
 
 if found == 1:
     print("Cost limit has been reached!")
@@ -103,8 +106,10 @@ elif found == 2:
     print("No excess energy, produced by renewables, is wasted.")
 elif found == 3:
     print("Renewables supply the grid at 100%!")
-    
-print(f'{"!":-^65}\n')
+
+print(f'There is a {infiltration} infiltration of renewables in the grid.')
+print(f'{carbon} tonnes of CO2 emissions are prevented, during projects lifetime.') 
+print(f'{"!":-^85}\n')
 
 print("Main modifiable parameters stored in config.py:\n"
       + "\t(1) Min and Max battery optimization search range\n"
@@ -114,6 +119,7 @@ print("Main modifiable parameters stored in config.py:\n"
         + "\t(5) Energy sell price (€/Wh)\n"
         + "\t(6) Discount rate\n"
         + "\t(7) Operational and Maintenance Costs (% of initial cost)\n"
+        + "\t(8) Tonnes of CO2 emissions per Wh\n"
         + "Feel free to tailor the source code to your needs!\n")
 '''Optimization'''
 '''Plot'''

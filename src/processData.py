@@ -10,6 +10,17 @@ from battery import Battery
 year = range(365)
 
 
+def carbonEmissions(gridload, gridload_flattened):
+		'''Calculate prevented carbon emissions, due to renewables'''
+		reduced_energy = (gridload - gridload_flattened).sum()
+		return reduced_energy * config.carbon_tperwh * config.project_lifetime
+
+
+def renewablesInfiltration(gridload, gridload_flattened):
+		'''Percentage of renewables' infiltration in the grid'''
+		reduced_energy = (gridload - gridload_flattened).sum()
+		return reduced_energy / gridload.sum()
+
 def energyPrettify(energy):
     '''Nice format for printing energy values'''
     return format(round(energy, 2), ",") + " Wh"
