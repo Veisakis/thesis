@@ -1,2 +1,10 @@
 src/__pycache__
 data/pv_production
+txt/thesis.aux
+txt/thesis.bbl
+txt/thesis.bcf
+txt/thesis.blg
+txt/thesis.log
+txt/thesis.out
+txt/thesis.run.xml
+txt/thesis.toc
