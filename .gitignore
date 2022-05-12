@@ -1,5 +1,9 @@
 src/__pycache__
 data/pv_production
+
+txt/info.pdf
+txt/links
+txt/thesis.pdf
 txt/thesis.aux
 txt/thesis.bbl
 txt/thesis.bcf
