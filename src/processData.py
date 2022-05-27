@@ -4,22 +4,22 @@ import sys
 import numpy as np
 import pandas as pd
 
-import economics, config
+import fetchData, economics, config
 from battery import Battery
 
 year = range(365)
 
 
 def carbonEmissions(gridload, gridload_flattened):
-		'''Calculate prevented carbon emissions, due to renewables'''
-		reduced_energy = (gridload - gridload_flattened).sum()
-		return reduced_energy * config.carbon_tperwh * config.project_lifetime
+    '''Calculate prevented carbon emissions, due to renewables'''
+    reduced_energy = (gridload - gridload_flattened).sum()
+    return reduced_energy * config.carbon_tperwh * config.project_lifetime
 
 
 def renewablesInfiltration(gridload, gridload_flattened):
-		'''Percentage of renewables' infiltration in the grid'''
-		reduced_energy = (gridload - gridload_flattened).sum()
-		return reduced_energy / gridload.sum()
+    '''Percentage of renewables' infiltration in the grid'''
+    reduced_energy = (gridload - gridload_flattened).sum()
+    return reduced_energy / gridload.sum()
 
 def energyPrettify(energy):
     '''Nice format for printing energy values'''
@@ -78,7 +78,7 @@ def batteryOptimization(res, gridload, gridload_mean, sample_min, sample_max, ba
     gridload_median = gridload_mean  # Instead of using global
     batteries_sample = list(range(sample_min, sample_max))
     
-    res_stack = res.stack().reset_index(drop=True)
+    res_stack = fetchData.to_series(res)
     gridload_stack = gridload.stack().reset_index(drop=True)
     
     for batteries in batteries_sample:

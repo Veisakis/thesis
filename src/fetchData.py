@@ -7,21 +7,22 @@ import pandas as pd
 import config
 
 
-def csv(name):
-    '''Get location's gridload data from the corresponding csv file'''
-    filename = config.path + "/thesis/data/" + name + "_gridload.csv"
+def from_csv(filename):
+    '''Convert csv data to raw form'''
     try:
-        gridload_raw = pd.read_csv(filename, sep=":")
+        raw_data = pd.read_csv(filename)
     except FileNotFoundError:
         print(f'File {filename} not found!')
         sys.exit()
     else:
-        print("Loaded gridload data for the area.")
-        return gridload_raw
+        return raw_data
         
         
 def pvgis(lat, lon, solar):
     '''Get hourly solar production data for a year from pv-gis's API'''
+    if solar == 0:
+        return pd.read_csv(config.path + "/thesis/data/pv_production_template.csv")
+
     print("\nFetching PV data from PV-GIS...")
     url = ("https://re.jrc.ec.europa.eu/api/seriescalc?lat="
            + lat+"&lon="+lon+"&startyear="+config.startyear+"&endyear="
@@ -47,19 +48,26 @@ def pvgis(lat, lon, solar):
     return pv_raw
 
 
-def formatData(pv_raw, gridload_raw):
-    '''Convert raw data to the appropriate form'''
-    gridload = gridload_raw.drop(
-        gridload_raw.columns[0:2], axis=1).reset_index(drop=True) * 1_000_000
-    gridload.columns = list(range(24))
-    gridload_mean = gridload.stack().mean()
-
+def from_pvgis(pv_raw):
+    '''Convert PV-GIS data to appropriate form'''
     pv = pv_raw['P'].iloc[::24]
     pv = pv.to_frame().rename(columns={'P': 0}).reset_index().drop(columns="index")
-
     for i in range(1, 24):
         filter = pv_raw['P'].iloc[i::24]
         df_newcol = pd.DataFrame(filter)
         df_newcol = df_newcol.reset_index().drop(columns="index")
         pv[i] = df_newcol
-    return pv, gridload, gridload_mean
+    pv.columns = range(1,25)
+    return pv
+
+
+def from_raw(raw):
+    '''Convert raw data to the appropriate form'''
+    data = raw * 1_000_000
+    data.columns = range(1,25)
+    data_mean = data.stack().mean()
+    return data, data_mean
+
+
+def to_series(frame):
+    return frame.stack().reset_index(drop=True)

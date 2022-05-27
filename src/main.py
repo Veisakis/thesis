@@ -33,6 +33,7 @@ while place > 7 or place < 1:
 
 lat = str(config.place_coordinates[place][0])
 lon = str(config.place_coordinates[place][1])
+placename_gridload = config.path + "/thesis/data/" + config.place_name[place] + "_gridload.csv"
 
 print("\nChoose battery type:")
 type = int(input("[1] Lead-Carbon (300,000.00€/MWh@5000cycles)\n"
@@ -54,22 +55,35 @@ except Exception as err:
     print("Failed to instantiate battery object from json file...\n")
     sys.exit(err)
 
-solar = int(input("\nHow much solar is wanted to be placed in the area (kWp)? "))
-while solar <= 0:
+solar = int(input("\nHow much PV power is wanted to be placed in the area (kWp)? "))
+while solar < 0:
     print("Installed kWp cannot be below zero...")
     solar = int(input("Please provide valid input: "))
+
+wind = int(input("How much wind turbine power is wanted to be placed in the area (MWp)? "))
+while wind < 0:
+    print("Installed MWp cannot be below zero...")
+    wind = int(input("Please provide valid input: "))
 
 cost = int(input('Set cost limit (€). Ιf none, type 0: '))
 while cost < 0:
     print("\nInvalid answer!")
     cost = int(input('Set cost limit (€)'))
+
 solar_cost = solar * config.pv_cost_perkWp
-res_cost = solar_cost
+wind_cost = wind * config.wt_cost_perMWp
+res_cost = solar_cost + wind_cost
 
 '''Optimization'''
 pv_raw = fetchData.pvgis(lat, lon, solar)
-gridload_raw = fetchData.csv(config.place_name[place])
-res, gridload, gridload_mean = fetchData.formatData(pv_raw, gridload_raw)
+wd_raw = fetchData.from_csv("../data/chania_wind.csv") * wind
+gridload_raw = fetchData.from_csv(placename_gridload)
+
+pv = fetchData.from_pvgis(pv_raw)
+wt = fetchData.from_raw(wd_raw)[0]
+res = pv + wt
+
+gridload, gridload_mean = fetchData.from_raw(gridload_raw)
 
 (res, gridload,
  wasted_energy, gridload_aided,
@@ -82,6 +96,7 @@ npv = economics.euro(npv)
 onm = economics.euro(onm)
 reinvest = economics.euro(reinvest)
 solar_cost = economics.euro(solar_cost)
+wind_cost = economics.euro(wind_cost)
 bat_cost = economics.euro(bat.cost)
 total_cost = economics.euro(costs)
 
@@ -93,6 +108,8 @@ print(f'\n{"*Optimization Results*":^85}')
 print(f'{lifetime:-^85}')
 print(f'PV: {solar:,} kWp')
 print(f'PV Initial Cost: {solar_cost}\n')
+print(f'WT: {wind:,} MWp')
+print(f'WT Initial Cost: {wind_cost}\n')
 print(f'Batteries: {bat.number}')
 print(f'Batteries Initial Cost: {bat_cost}\n')
 print(f'Operational and Maintenance Costs: {onm}')
@@ -123,25 +140,36 @@ print("Main modifiable parameters stored in config.py:\n"
         + "Feel free to tailor the source code to your needs!\n")
 '''Optimization'''
 '''Plot'''
+pv_series = fetchData.to_series(pv)
+wt_series = fetchData.to_series(wt)
+
 plt.style.use('classic')
+plt.rcParams['font.family'] = 'serif'
+
 fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
 
 
-ax1.plot(config.timespan, res[config.timespan], linestyle='dashed',
-         color='darkolivegreen', label='PV power output')
+ax1.plot(config.timespan, pv_series[config.timespan],
+         color='tomato', label='PV power output')
+ax1.plot(config.timespan, wt_series[config.timespan],
+         color='deepskyblue', label='WT power output')
 ax1.plot(config.timespan, gridload[config.timespan],
-         color='saddlebrown', label='Grid Load')
+         color='darkslategrey', label='Grid Load')
 
-ax1.fill_between(config.timespan, res[config.timespan], gridload[config.timespan],
-                 where=(res[config.timespan] > gridload[config.timespan]), interpolate=True,
-                 color='yellowgreen', alpha=0.40, label='Excess Energy')
+ax1.fill_between(config.timespan, pv_series[config.timespan], gridload[config.timespan],
+                 where=(pv_series[config.timespan] > gridload[config.timespan]), interpolate=True,
+                 color='seagreen', alpha=0.40, label='Excess Energy')
+
+ax1.fill_between(config.timespan, wt_series[config.timespan], gridload[config.timespan],
+                 where=(wt_series[config.timespan] > gridload[config.timespan]),
+                 interpolate=True, color='seagreen', alpha=0.40)
 
 ax1.set_xticks(config.timespan, minor=True)
 ax1.set_xticks(np.arange(config.timespan[0], config.timespan[-1], 24))
 ax1.set_xlim(config.timespan[0], config.timespan[-1])
 
 ax1.set_ylabel('Power (W)', fontsize='medium')
-ax1.set_title('Grid load and PV power output curves', fontsize='x-large')
+ax1.set_title('Grid load and RES power output curves', fontsize='x-large')
 
 ax1.grid(which='minor', alpha=0.5)
 ax1.grid(which='major', alpha=1.0)
@@ -149,12 +177,12 @@ ax1.legend(loc='upper left', fontsize='x-small')
 
 
 ax2.plot(config.timespan, gridload_aided[config.timespan],
-         color='saddlebrown', label='Grid Load without battery storage')
+         color='darkslategrey', label='Grid Load without battery storage')
 ax2.plot(config.timespan, gridload_flattened[config.timespan],
-         color='darkolivegreen', label='Grid Load with battery storage')
+         color='sienna', label='Grid Load with battery storage')
 
-ax2.fill_between(config.timespan, gridload_aided[config.timespan], color='saddlebrown', alpha=0.50)
-ax2.fill_between(config.timespan, gridload_flattened[config.timespan], color='olive', alpha=0.30)
+ax2.fill_between(config.timespan, gridload_aided[config.timespan], color='darkslategrey', alpha=0.30)
+ax2.fill_between(config.timespan, gridload_flattened[config.timespan], color='darkorange', alpha=0.30)
 
 ax2.set_xticks(config.timespan, minor=True)
 ax2.set_xticks(np.arange(config.timespan[0], config.timespan[-1], 24))
@@ -162,7 +190,7 @@ ax2.set_xlim(config.timespan[0], config.timespan[-1])
 
 ax2.set_xlabel('Hour of the year (h)', fontsize='medium')
 ax2.set_ylabel('Power (W)', fontsize='medium')
-ax2.set_title('Grid load "with" and "without" Batteries', fontsize='x-large')
+ax2.set_title('Grid load "with" and "without" Batteries', fontsize='x-large') 
 
 ax2.grid(which='minor', alpha=0.5)
 ax2.grid(which='major', alpha=1.0)

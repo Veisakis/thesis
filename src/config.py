@@ -13,6 +13,7 @@ project_lifetime = 25
 onm = 0.01
 wh_sell_price = 0.0002
 pv_cost_perkWp = 1_000
+wt_cost_perMWp = 1_000_000
 
 loss = "14"
 angle = "30"
