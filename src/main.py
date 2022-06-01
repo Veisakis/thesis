@@ -22,7 +22,7 @@ print("'How many batteries need to be installed, to handle more renewables on th
       + "(2) Renewables and batteries can supply 100% of gridload.\n"
       + "(3) Cost limit is reached (if set).\n")
 
-print("Select examination area from the list below (1-5)")
+print("Select examination area from the list below (1-7)")
 place = int(input("[1] Chania\n[2] Rethymno\n[3] Heraklio\n"
                   + "[4] Ag.Nikolaos\n[5] Moires\n[6] Ierapetra\n[7] Sitia\n"))
 
