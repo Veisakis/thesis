@@ -23,7 +23,7 @@ def pvgis(lat, lon, solar):
     if solar == 0:
         return pd.read_csv(config.path + "/thesis/data/pv_production_template.csv")
 
-    print("\nFetching PV data from PV-GIS...")
+    print("\nConnecting to PV-GIS...")
     url = ("https://re.jrc.ec.europa.eu/api/seriescalc?lat="
            + lat+"&lon="+lon+"&startyear="+config.startyear+"&endyear="
            + config.endyear+"&peakpower="+str(solar)+"&angle="+config.angle
@@ -36,10 +36,10 @@ def pvgis(lat, lon, solar):
         print(f'Status code: {r.status_code}')
         sys.exit()
     else:
-        print("Connection Established!\n")
-        os.system("curl \'"+url+"\' | tail -n+11 | head -n-11 >" +
+        print("Connection Established!")
+        os.system("curl --progress-bar \'"+url+"\' | tail -n+11 | head -n-11 >" +
                   config.path+"/thesis/data/pv_production.csv")
-        print("\nSaved solar data to file pv_production.csv")
+        print("Saved solar data to file pv_production.csv")
 
     try:
         pv_raw = pd.read_csv(config.path + "/thesis/data/pv_production.csv")
@@ -63,6 +63,7 @@ def from_pvgis(pv_raw):
 
 def from_raw(raw):
     '''Convert raw data to the appropriate form'''
+    raw[raw<0] = 0
     data = raw * 1_000_000
     data.columns = range(1,25)
     data_mean = data.stack().mean()

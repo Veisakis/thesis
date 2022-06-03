@@ -3,8 +3,8 @@ import os
 batSearch_start = 1
 batSearch_end = 500
 
-plotDay_start = 220
-plotDay_end = 240
+plotDay_start = 240
+plotDay_end = 260
 timespan = range(24*plotDay_start, 24*plotDay_end)
 
 discount_rate = 0.06
@@ -36,7 +36,7 @@ place_coordinates = {
 place_name = {
     1: "chania",
     2: "rethymno",
-    3: "heraklio",
+    3: "hrakleio",
     4: "agnikolaos",
     5: "moires",
     6: "ierapetra",

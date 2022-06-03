@@ -23,17 +23,19 @@ print("'How many batteries need to be installed, to handle more renewables on th
       + "(3) Cost limit is reached (if set).\n")
 
 print("Select examination area from the list below (1-7)")
-place = int(input("[1] Chania\n[2] Rethymno\n[3] Heraklio\n"
-                  + "[4] Ag.Nikolaos\n[5] Moires\n[6] Ierapetra\n[7] Sitia\n"))
+place = int(input("[1] Chania\n[2] Rethymno\n[3] Hrakleio\n"
+                  + "[4] Ag.Nikolaos\n[5] Moires\n[6] Ierapetra\n[7] Shteia\n"))
 
 while place > 7 or place < 1:
     print("\nInvalid answer. Please choose one of the below:")
-    place = int(input("[1] Chania\n[2] Rethymno\n[3] Heraklio\n"
-                      + "[4] Ag.Nikolaos\n[5] Moires\n[6] Ierapetra\n[7] Sitia\n"))
+    place = int(input("[1] Chania\n[2] Rethymno\n[3] Hrakleio\n"
+                      + "[4] Ag.Nikolaos\n[5] Moires\n[6] Ierapetra\n[7] Shteia\n"))
 
 lat = str(config.place_coordinates[place][0])
 lon = str(config.place_coordinates[place][1])
+
 placename_gridload = config.path + "/thesis/data/" + config.place_name[place] + "_gridload.csv"
+placename_wind = config.path + "/thesis/data/" + config.place_name[place] + "_wind.csv"
 
 print("\nChoose battery type:")
 type = int(input("[1] Lead-Carbon (300,000.00€/MWh@5000cycles)\n"
@@ -76,7 +78,7 @@ res_cost = solar_cost + wind_cost
 
 '''Optimization'''
 pv_raw = fetchData.pvgis(lat, lon, solar)
-wd_raw = fetchData.from_csv("../data/chania_wind.csv") * wind
+wd_raw = fetchData.from_csv(placename_wind) * wind
 gridload_raw = fetchData.from_csv(placename_gridload)
 
 pv = fetchData.from_pvgis(pv_raw)
