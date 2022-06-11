@@ -19,7 +19,7 @@ def from_csv(filename):
         
         
 def pvgis(lat, lon, solar):
-    '''Get hourly solar production data for a year from pv-gis's API'''
+    '''Get hourly solar production data for a year from pv-gis' API'''
     if solar == 0:
         return pd.read_csv(config.path + "/thesis/data/pv_production_template.csv")
 

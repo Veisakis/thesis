@@ -21,6 +21,7 @@ def renewablesInfiltration(gridload, gridload_flattened):
     reduced_energy = (gridload - gridload_flattened).sum()
     return reduced_energy / gridload.sum()
 
+
 def energyPrettify(energy):
     '''Nice format for printing energy values'''
     return format(round(energy, 2), ",") + " Wh"

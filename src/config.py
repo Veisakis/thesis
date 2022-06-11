@@ -20,7 +20,7 @@ angle = "30"
 endyear = "2014"
 startyear = "2014"
 
-carbon_tperwh = 0.000623
+carbon_tperwh = 0.000000623
 path = os.environ['HOME']
 
 place_coordinates = {
