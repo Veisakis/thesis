@@ -1,3 +1,5 @@
+![plot](txt/img/plot.png)
+
 *'How many batteries need to be installed, to handle more renewables on the grid?'*\
 An optimization script to solve this problem.
 
