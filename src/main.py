@@ -14,7 +14,7 @@ from battery import Battery
 
 
 os.system("clear")
-os.system("figlet TEI Crete")
+os.system("figlet HMU")
 print("'How many batteries need to be installed, to handle more renewables on the grid?'\n"
       + "An optimization script to solve this problem.\n"
       + "\nOptimization ends when either:\n"
